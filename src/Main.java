@@ -8,6 +8,7 @@ import src.modules.Menu;
 
 public class Main {
     public static void main(String[] args) {
+<<<<<<< HEAD
         try {
             Screen screen = new DefaultTerminalFactory().createScreen();
             screen.startScreen();
