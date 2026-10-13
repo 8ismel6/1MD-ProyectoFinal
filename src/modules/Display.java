@@ -59,12 +59,19 @@ public class Display {
         txt.setForegroundColor(TextColor.ANSI.DEFAULT);
     }
 
-    static String draw_username_input(Screen screen)throws IOException{
+    static String get_username_input(Screen screen)throws IOException{
         KeyStroke key = screen.readInput();
         switch (key.getKeyType()) {
+                case Enter:
+                    return null;
                 default:
-                    String input = key.getCharacter().toString();
-                    return input;
+                    try {
+                        String input = key.getCharacter().toString();
+                        return input;
+                    } catch (Exception e) {
+                        return "";
+                    }
+
                     
             }
     }

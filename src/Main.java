@@ -3,12 +3,11 @@ package src;
 
 import java.io.IOException;
 
-import com.googlecode.lanterna.TerminalSize;
+
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
 
-import src.modules.Display;
+//import src.modules.Display;
 import src.modules.Menu;
 import src.modules.Game;
 

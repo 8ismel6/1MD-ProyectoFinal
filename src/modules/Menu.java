@@ -25,14 +25,18 @@ public class Menu {
         "   \\----------------/"
     };
     private static final String title = "--- Proyecto final batalla naval Ismael y Yamandu ---";
+    private static final String title_username = "--- Ingrese nombre de usuario ---";
+    private static final String title_board_size = "--- Ingrese el tamañno del tableero ---";
     private static final String[] options = {
         "[  Jugar  ]",
         "[  Salir  ]"
     };
-    private static final String title_username = "--- Ingrese nombre de usuario ---";
     private static  String username = "";
-    private static  String blank_space = "";
-    private static  int  num_blank_space = 22;
+    private static  final String blank_space = "                      ";
+    private static final String warning = "(No se puede borrar y max. 20 caracteres)";
+    private static final String warning_two = "(Up para aumentar Down para disminuir)";
+    private static final String blank_space_board = "    ";
+    private static int size_board = 12;
     
 
     private static void draw_ascii(TextGraphics txt, int columns,  int menu) {
@@ -48,16 +52,21 @@ public class Menu {
             
         }
         else{
-            txt.putString(Display.center_x(columns, title_username.length()), boat.length + 2, title_username);
-            txt.setBackgroundColor(TextColor.ANSI.BLACK);
-            blank_space = "";
-            for(int i = 0;i<num_blank_space;i++){
-                blank_space += " ";
+            if(menu == 1){
+                txt.putString(Display.center_x(columns, title_username.length()), boat.length + 2, title_username);
+                txt.putString(Display.center_x(columns, warning.length()), boat.length + 7, warning);
+                txt.setBackgroundColor(TextColor.ANSI.BLACK);
+                txt.putString(Display.center_x(columns, blank_space.length()) , boat.length + 4, blank_space);
+                txt.putString(Display.center_x(columns, username.length()), boat.length + 4, username);
+                txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
             }
-            txt.putString(Display.center_x(columns, blank_space.length()) , boat.length + 4, blank_space);
-            txt.putString(Display.center_x(columns, username.length()), boat.length + 4, username);
-            txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
-
+            else{
+                txt.putString(Display.center_x(columns, title_board_size.length()), boat.length + 2, title_board_size);
+                txt.setBackgroundColor(TextColor.ANSI.BLACK);
+                txt.putString(Display.center_x(columns, blank_space_board.length()), boat.length + 4, blank_space_board);
+                txt.putString(Display.center_x(columns, 2), boat.length + 4, Integer.toString(size_board));
+                txt.putString(Display.center_x(columns, warning_two.length()), boat.length + 6, warning_two);
+            }
         }     
         
     }
@@ -106,13 +115,21 @@ public class Menu {
             }
             }
             else{
+                String username_input;
                 if (username.length() < 20){
-                    username += Display.draw_username_input(screen);
-                    blank_space = "";
-
+                    username_input =Display.get_username_input(screen);
+                    if(username_input != null){
+                        username += username_input;
+                    }
                 }
                 else{
-                    String a = Display.draw_username_input(screen);
+                    username_input = Display.get_username_input(screen);
+                }
+                if (username_input == null){
+                    if(username.equals("")){
+                        username = "user";
+                    }
+                    menu = 2;
                 }
             }
         }
