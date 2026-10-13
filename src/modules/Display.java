@@ -1,8 +1,14 @@
 package src.modules;
 //Styles and utilities
 
+import java.io.IOException;
+import java.util.Random;
+
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.screen.Screen;
 
 public class Display {
     static int center_x(int total, int width) {
@@ -52,4 +58,46 @@ public class Display {
         txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
         txt.setForegroundColor(TextColor.ANSI.DEFAULT);
     }
+
+    static String draw_username_input(Screen screen)throws IOException{
+        KeyStroke key = screen.readInput();
+        switch (key.getKeyType()) {
+                default:
+                    String input = key.getCharacter().toString();
+                    return input;
+                    
+            }
+    }
+
+    static void draw_board(TextGraphics txt,int x, int y,int size,int x_selected, int y_seleccted){
+        Random a = new Random();
+        txt.enableModifiers(SGR.BOLD);
+        for(int i = 0; i <size;i++){
+            for(int j = 0; j<size;j++){
+                if(i == x_selected && j == y_seleccted){
+                    txt.setBackgroundColor(TextColor.ANSI.BLUE_BRIGHT);
+                    txt.setForegroundColor(TextColor.ANSI.WHITE);
+                    txt.setCharacter(x + (i*2),y + j, '■');
+                }
+                else{
+                    if(a.nextInt(2)== 0){
+                        txt.setForegroundColor(TextColor.ANSI.BLUE_BRIGHT); 
+                    }
+                    else{    
+                        txt.setForegroundColor(TextColor.ANSI.BLUE);
+                    }
+                    if(a.nextInt(2) == 0){
+                        txt.setCharacter(x + (i*2),y + j, '■');
+                    }
+                    else{
+                        txt.setCharacter(x + (i*2),y+j, '◾');
+                    }
+                }
+                txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                
+            }
+        }
+        
+    }
+
 }
