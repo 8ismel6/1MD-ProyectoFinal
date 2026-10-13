@@ -32,7 +32,7 @@ public class Menu {
     private static final String title_username = "--- Ingrese nombre de usuario ---";
     private static  String username = "";
     private static  String blank_space = "";
-    private static  int  num_blank_space = 20;
+    private static  int  num_blank_space = 22;
     
 
     private static void draw_ascii(TextGraphics txt, int columns,  int menu) {
