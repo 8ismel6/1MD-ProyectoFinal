@@ -20,7 +20,6 @@ public class Main {
             screen.startScreen();
             int choice = Menu.show(screen);
             if (choice == 0) {
-
                 Game.game(screen);
             }
 

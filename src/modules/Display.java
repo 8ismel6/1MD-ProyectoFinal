@@ -64,13 +64,15 @@ public class Display {
         switch (key.getKeyType()) {
                 case Enter:
                     return null;
-                default:
+                case Character:
                     try {
                         String input = key.getCharacter().toString();
                         return input;
                     } catch (Exception e) {
                         return "";
                     }
+                default:
+                    return "";
 
                     
             }
