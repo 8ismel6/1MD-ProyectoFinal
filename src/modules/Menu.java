@@ -36,7 +36,7 @@ public class Menu {
     private static final String warning = "(No se puede borrar y max. 20 caracteres)";
     private static final String warning_two = "(Up para aumentar Down para disminuir)";
     private static final String blank_space_board = "    ";
-    private static int size_board = 12;
+    public static int size_board = 12;
     
 
     private static void draw_ascii(TextGraphics txt, int columns,  int menu) {
@@ -62,10 +62,12 @@ public class Menu {
             }
             else{
                 txt.putString(Display.center_x(columns, title_board_size.length()), boat.length + 2, title_board_size);
+                txt.putString(Display.center_x(columns, warning_two.length()), boat.length + 6, warning_two);
                 txt.setBackgroundColor(TextColor.ANSI.BLACK);
                 txt.putString(Display.center_x(columns, blank_space_board.length()), boat.length + 4, blank_space_board);
                 txt.putString(Display.center_x(columns, 2), boat.length + 4, Integer.toString(size_board));
-                txt.putString(Display.center_x(columns, warning_two.length()), boat.length + 6, warning_two);
+                txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                
             }
         }     
         
@@ -115,21 +117,42 @@ public class Menu {
             }
             }
             else{
-                String username_input;
-                if (username.length() < 20){
-                    username_input =Display.get_username_input(screen);
-                    if(username_input != null){
-                        username += username_input;
+                if(menu == 1){
+                    String username_input;
+                    if (username.length() < 20){
+                        username_input =Display.get_username_input(screen);
+                        if(username_input != null){
+                            username += username_input;
+                        }
+                    }
+                    else{
+                        username_input = Display.get_username_input(screen);
+                    }
+                    if (username_input == null){
+                        if(username.equals("")){
+                            username = "user";
+                        }
+                        menu = 2;
                     }
                 }
                 else{
-                    username_input = Display.get_username_input(screen);
-                }
-                if (username_input == null){
-                    if(username.equals("")){
-                        username = "user";
+                    KeyStroke key = screen.readInput();
+                    switch (key.getKeyType()) {
+                        case ArrowUp:
+                            if(size_board <= 24){
+                                size_board ++;
+                            }
+                            break;
+                        case ArrowDown:
+                            if(size_board >= 13){
+                                size_board -= 1;
+                            }
+                            break;
+                        case Enter:
+                            return selected;
+                        default:
+                            break;
                     }
-                    menu = 2;
                 }
             }
         }
