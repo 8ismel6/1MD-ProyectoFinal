@@ -21,6 +21,16 @@ public class Menu {
         "[  Jugar  ]",
         "[  Salir  ]"
     };
+<<<<<<< HEAD
+=======
+    private static  String username = "";
+    private static  final String blank_space = "                      ";
+    private static final String warning = "(No se puede borrar y max. 20 caracteres)";
+    private static final String warning_two = "(Up para aumentar Down para disminuir)";
+    private static final String blank_space_board = "    ";
+    public static int size_board = 12;
+    
+>>>>>>> d2834d6b8ad751b3379a6ad61ac971682856908e
 
     private static void draw_ascii(TextGraphics txt, int columns,  int menu) {
         txt.enableModifiers(SGR.BOLD);
@@ -44,11 +54,21 @@ public class Menu {
                 txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
             }
             else{
+<<<<<<< HEAD
                 txt.putString(Display.center_x(columns, Texts.title_board_size.length()), Texts.boat.length + 2, Texts.title_board_size);
                 txt.setBackgroundColor(TextColor.ANSI.BLACK);
                 txt.putString(Display.center_x(columns, blank_space_board.length()), Texts.boat.length + 4, blank_space_board);
                 txt.putString(Display.center_x(columns, 2), Texts.boat.length + 4, Integer.toString(size_board));
                 txt.putString(Display.center_x(columns, Texts.warning_two.length()), Texts.boat.length + 6, Texts.warning_two);
+=======
+                txt.putString(Display.center_x(columns, title_board_size.length()), boat.length + 2, title_board_size);
+                txt.putString(Display.center_x(columns, warning_two.length()), boat.length + 6, warning_two);
+                txt.setBackgroundColor(TextColor.ANSI.BLACK);
+                txt.putString(Display.center_x(columns, blank_space_board.length()), boat.length + 4, blank_space_board);
+                txt.putString(Display.center_x(columns, 2), boat.length + 4, Integer.toString(size_board));
+                txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                
+>>>>>>> d2834d6b8ad751b3379a6ad61ac971682856908e
             }
         }     
         
@@ -98,21 +118,42 @@ public class Menu {
             }
             }
             else{
-                String username_input;
-                if (username.length() < 20){
-                    username_input =Display.get_username_input(screen);
-                    if(username_input != null){
-                        username += username_input;
+                if(menu == 1){
+                    String username_input;
+                    if (username.length() < 20){
+                        username_input =Display.get_username_input(screen);
+                        if(username_input != null){
+                            username += username_input;
+                        }
+                    }
+                    else{
+                        username_input = Display.get_username_input(screen);
+                    }
+                    if (username_input == null){
+                        if(username.equals("")){
+                            username = "user";
+                        }
+                        menu = 2;
                     }
                 }
                 else{
-                    username_input = Display.get_username_input(screen);
-                }
-                if (username_input == null){
-                    if(username.equals("")){
-                        username = "user";
+                    KeyStroke key = screen.readInput();
+                    switch (key.getKeyType()) {
+                        case ArrowUp:
+                            if(size_board <= 24){
+                                size_board ++;
+                            }
+                            break;
+                        case ArrowDown:
+                            if(size_board >= 13){
+                                size_board -= 1;
+                            }
+                            break;
+                        case Enter:
+                            return selected;
+                        default:
+                            break;
                     }
-                    menu = 2;
                 }
             }
         }
