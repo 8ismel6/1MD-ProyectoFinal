@@ -15,11 +15,12 @@ public class Main {
     public static void main(String[] args) {
 
         try {
+            
             Screen screen = new DefaultTerminalFactory().createScreen();
             screen.startScreen();
             int choice = Menu.show(screen);
             if (choice == 0) {
-                screen.clear();
+
                 Game.game(screen);
             }
 
