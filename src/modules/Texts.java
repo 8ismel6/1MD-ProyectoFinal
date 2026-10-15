@@ -18,7 +18,7 @@ public class Texts {
     };
     public static String title = "--- Proyecto final batalla naval Ismael y Yamandu ---";
     public static String title_username = "--- Ingrese nombre de usuario ---";
-    public static String title_board_size = "--- Ingrese el tamañno del tableero ---";
+    public static String title_board_size = "--- Ingrese el tamañno del tablero ---";
     public static String username = "";
     public static String blank_space = "                      ";
     public static final String blank_space_board = "    ";

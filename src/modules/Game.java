@@ -2,6 +2,7 @@ package src.modules;
 
 
 import java.io.IOException;
+import java.util.Random;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -10,15 +11,19 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 public class Game {
     static int size_board = 12;
-
+    
     public static void game(Screen screen) throws IOException{
         TextGraphics txt = screen.newTextGraphics();
         TerminalSize size = screen.getTerminalSize();
+        int columns = size.getColumns();
+        int mid_x = Display.center_x(columns, size_board);
+        put_boat(screen, txt,mid_x,3,6);
         int x = 0;
         int y = 0;
         while (true) {
             screen.clear();
-            Display.draw_board(txt,20,0,25,x,y);
+            Display.draw_board(txt,20,0,size_board,x,y
+            );
             screen.refresh();
             KeyStroke key = screen.readInput();
             switch (key.getKeyType()) {
@@ -47,6 +52,45 @@ public class Game {
             }
         }
        
+    }
+
+    public static void put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2)throws IOException{
+        int min_x = x1;
+        int max_x = x2;
+        int y = 0;
+
+        while (true) {
+            screen.clear();
+            Display.draw_board_wb(txt,mid, 0, size_board, min_x, max_x, y);
+            screen.refresh();
+            KeyStroke key = screen.readInput();
+            switch (key.getKeyType()) {
+                case ArrowUp:
+                    if(y - 1 >= 0){
+                        y -= 1;
+                    }
+                    break;
+                case ArrowDown:
+                    if(y + 1 <= 24){
+                        y += 1;
+                    }
+                    break;
+                case ArrowLeft:
+                    if(min_x - 1 >= 0){
+                        min_x -= 1;
+                        max_x -= 1;
+                    }
+                    break;
+                case ArrowRight:
+                    if(max_x + 1 <= 24){
+                        max_x += 1;
+                        min_x += 1;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public static boolean guess_boat(Player p1, Player p2, int x, int y){

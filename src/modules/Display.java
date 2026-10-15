@@ -80,7 +80,6 @@ public class Display {
 
     //SE NECESITA UNA FUENTE DE TERMINAL ESPECIFICA
     static void draw_board(TextGraphics txt,int x, int y,int size,int x_selected, int y_seleccted){
-        Random a = new Random();
         txt.enableModifiers(SGR.BOLD);
         for(int i = 0; i <size;i++){
             for(int j = 0; j<size;j++){
@@ -90,18 +89,28 @@ public class Display {
                     txt.setCharacter(x + (i*2),y + j, '■');
                 }
                 else{
-                    if(a.nextInt(2)== 0){
-                        txt.setForegroundColor(TextColor.ANSI.BLUE_BRIGHT); 
-                    }
-                    else{    
-                        txt.setForegroundColor(TextColor.ANSI.BLUE);
-                    }
-                    if(a.nextInt(2) == 0){
-                        txt.setCharacter(x + (i*2),y + j, '■');
-                    }
-                    else{
-                        txt.setCharacter(x + (i*2),y+j, '◾');
-                    }
+                    txt.setForegroundColor(TextColor.ANSI.BLUE);
+                    txt.setCharacter(x + (i*2),y + j, '■');
+                }
+                txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                
+            }
+        }
+        
+    }
+
+    static void draw_board_wb(TextGraphics txt,int x, int y,int size,int min_x_selected, int max_x_selected, int y_seleccted){
+        txt.enableModifiers(SGR.BOLD);
+        for(int i = 0; i <size;i++){
+            for(int j = 0; j<size;j++){
+                if(i >= min_x_selected && i <= max_x_selected && j == y_seleccted){
+                    txt.setBackgroundColor(TextColor.ANSI.RED);
+                    txt.setForegroundColor(TextColor.ANSI.WHITE);
+                    txt.setCharacter(x + (i*2),y + j, '■');
+                }
+                else{
+                txt.setForegroundColor(TextColor.ANSI.BLUE);
+                txt.setCharacter(x + (i*2),y + j, '■');
                 }
                 txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
                 
