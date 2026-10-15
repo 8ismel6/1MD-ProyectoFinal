@@ -78,13 +78,14 @@ public class Display {
             }
     }
 
+    //SE NECESITA UNA FUENTE DE TERMINAL ESPECIFICA
     static void draw_board(TextGraphics txt,int x, int y,int size,int x_selected, int y_seleccted){
         Random a = new Random();
         txt.enableModifiers(SGR.BOLD);
         for(int i = 0; i <size;i++){
             for(int j = 0; j<size;j++){
                 if(i == x_selected && j == y_seleccted){
-                    txt.setBackgroundColor(TextColor.ANSI.BLUE_BRIGHT);
+                    txt.setBackgroundColor(TextColor.ANSI.RED);
                     txt.setForegroundColor(TextColor.ANSI.WHITE);
                     txt.setCharacter(x + (i*2),y + j, '■');
                 }
