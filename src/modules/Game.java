@@ -16,14 +16,13 @@ public class Game {
         TextGraphics txt = screen.newTextGraphics();
         TerminalSize size = screen.getTerminalSize();
         int columns = size.getColumns();
-        int mid_x = Display.center_x(columns, size_board);
-        put_boat(screen, txt,mid_x,3,6);
+        int mid_x = Display.center_x(columns, size_board * 2);
         int x = 0;
         int y = 0;
-        while (true) {
+        put_boat(screen, txt,mid_x,3,6);
+        /*while (true) {
             screen.clear();
-            Display.draw_board(txt,20,0,size_board,x,y
-            );
+            Display.draw_board(txt,20,0,size_board,x,y);
             screen.refresh();
             KeyStroke key = screen.readInput();
             switch (key.getKeyType()) {
@@ -33,7 +32,7 @@ public class Game {
                     }
                     break;
                 case ArrowDown:
-                    if(y + 1 <= 24){
+                    if(y + 1 < size_board){
                         y += 1;
                     }
                     break;
@@ -43,14 +42,14 @@ public class Game {
                     }
                     break;
                 case ArrowRight:
-                    if(x + 1 <= 24){
+                    if(x + 1 < size_board){
                         x += 1;
                     }
                     break;
                 default:
                     break;
             }
-        }
+        }*/
        
     }
 
@@ -71,7 +70,7 @@ public class Game {
                     }
                     break;
                 case ArrowDown:
-                    if(y + 1 <= 24){
+                    if(y + 1 < size_board){
                         y += 1;
                     }
                     break;
@@ -82,7 +81,7 @@ public class Game {
                     }
                     break;
                 case ArrowRight:
-                    if(max_x + 1 <= 24){
+                    if(max_x + 1 < size_board){
                         max_x += 1;
                         min_x += 1;
                     }
