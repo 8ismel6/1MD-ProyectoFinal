@@ -99,14 +99,17 @@ public class Display {
         
     }
 
-    static void draw_board_wb(TextGraphics txt,int x, int y,int size,int min_x_selected, int max_x_selected, int y_seleccted){
+    static void draw_board_wb(TextGraphics txt,int x, int y,int size,int min_x_selected, int max_x_selected, int min_y_seleccted, int max_y_selected){
         txt.enableModifiers(SGR.BOLD);
         for(int i = 0; i <size;i++){
             for(int j = 0; j<size;j++){
-                if(i >= min_x_selected && i <= max_x_selected && j == y_seleccted){
+                if(i >= min_x_selected && i <= max_x_selected && j >= min_y_seleccted && j <=max_y_selected){
                     txt.setBackgroundColor(TextColor.ANSI.RED);
                     txt.setForegroundColor(TextColor.ANSI.WHITE);
                     txt.setCharacter(x + (i*2),y + j, '■');
+                    if(min_x_selected < i){
+                        txt.setCharacter(x + (i*2) - 1,y+j, ' ');
+                    }
                 }
                 else{
                 txt.setForegroundColor(TextColor.ANSI.BLUE);

@@ -19,7 +19,7 @@ public class Game {
         int mid_x = Display.center_x(columns, size_board * 2);
         int x = 0;
         int y = 0;
-        put_boat(screen, txt,mid_x,3,6);
+        put_boat(screen, txt,mid_x,3,7,y,5);
         /*while (true) {
             screen.clear();
             Display.draw_board(txt,20,0,size_board,x,y);
@@ -53,25 +53,29 @@ public class Game {
        
     }
 
-    public static void put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2)throws IOException{
+    public static void put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2,int y,int size)throws IOException{
         int min_x = x1;
         int max_x = x2;
-        int y = 0;
+        int min_y = y;
+        int max_y = y;
+        boolean horizontal = true;
 
         while (true) {
             screen.clear();
-            Display.draw_board_wb(txt,mid, 0, size_board, min_x, max_x, y);
+            Display.draw_board_wb(txt,mid, 0, size_board, min_x, max_x, min_y,max_y);
             screen.refresh();
             KeyStroke key = screen.readInput();
             switch (key.getKeyType()) {
                 case ArrowUp:
-                    if(y - 1 >= 0){
-                        y -= 1;
+                    if(min_y - 1 >= 0){
+                        max_y -= 1;
+                        min_y -= 1;
                     }
                     break;
                 case ArrowDown:
-                    if(y + 1 < size_board){
-                        y += 1;
+                    if(max_y + 1 < size_board){
+                        max_y += 1;
+                        min_y += 1;
                     }
                     break;
                 case ArrowLeft:
@@ -88,6 +92,7 @@ public class Game {
                     break;
                 default:
                     break;
+                
             }
         }
     }
