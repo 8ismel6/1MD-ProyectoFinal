@@ -17,9 +17,13 @@ public class Game {
         TerminalSize size = screen.getTerminalSize();
         int columns = size.getColumns();
         int mid_x = Display.center_x(columns, size_board * 2);
-        int x = 0;
-        int y = 0;
-        put_boat(screen, txt,mid_x,3,7,y,5);
+        Player player = new Player();
+        Player bot = new Player();
+        Boat boat = new Boat();
+        for(int i = 0; i <= 5; i++){
+            boat.generate_boat();
+            int[] coordenates = put_boat(screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y);
+        }
         /*while (true) {
             screen.clear();
             Display.draw_board(txt,20,0,size_board,x,y);
@@ -53,12 +57,13 @@ public class Game {
        
     }
 
-    public static void put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2,int y,int size)throws IOException{
+    public static int[] put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2,int y1, int y2)throws IOException{
         int min_x = x1;
         int max_x = x2;
-        int min_y = y;
-        int max_y = y;
-        boolean horizontal = true;
+        int min_y = y1;
+        int max_y = y2;
+        int[] coordenates = {min_x,max_x,min_y,max_y};
+
 
         while (true) {
             screen.clear();
@@ -90,6 +95,8 @@ public class Game {
                         min_x += 1;
                     }
                     break;
+                case Enter:
+                    return coordenates;
                 default:
                     break;
                 
@@ -136,11 +143,33 @@ class Board{
             return false;
         }
     }
+
+    
 }
     
 
 class Boat{
+    private boolean horizontal;
+    public int size;
+    public int min_y = 0;
+    public int min_x = 0;
+    public int max_y;
+    public int max_x;
 
+    public void generate_boat(){
+        Random a = new Random();
+        size = a.nextInt(6) + 3;
+        if(a.nextInt(2) == 0){
+            horizontal = false;
+            max_x = 0;
+            max_y = size -1;
+        }
+        else{
+            horizontal = true;
+            max_y = 0;
+            max_x = size -1;
+        }
+    }
 }
 
 class Player{
