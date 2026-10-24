@@ -79,19 +79,12 @@ public class Display {
     }
 
     //SE NECESITA UNA FUENTE DE TERMINAL ESPECIFICA
-    static void draw_board(TextGraphics txt,int x, int y,int size,int x_selected, int y_seleccted){
+    static void draw_board(TextGraphics txt,int x, int y,int size){
         txt.enableModifiers(SGR.BOLD);
         for(int i = 0; i <size;i++){
-            for(int j = 0; j<size;j++){
-                if(i == x_selected && j == y_seleccted){
-                    txt.setBackgroundColor(TextColor.ANSI.RED);
-                    txt.setForegroundColor(TextColor.ANSI.WHITE);
-                    txt.setCharacter(x + (i*2),y + j, '■');
-                }
-                else{
-                    txt.setForegroundColor(TextColor.ANSI.BLUE);
-                    txt.setCharacter(x + (i*2),y + j, '■');
-                }
+            for(int j = 0; j<size;j++){    
+                txt.setForegroundColor(TextColor.ANSI.BLUE);
+                txt.setCharacter(x + (i*2),y + j, '■');
                 txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
                 
             }
@@ -99,6 +92,29 @@ public class Display {
         
     }
 
+    static void draw_boats(TextGraphics txt,int[][] board,int size, int x, int y, int min_x, int max_x, int min_y, int max_y){
+        for(int i = 0; i <size;i++){
+            for(int j = 0; j<size;j++){   
+                if(board[i][j] == 1){
+                    txt.setForegroundColor(TextColor.ANSI.BLACK);
+                    txt.setCharacter(x + (i*2),y + j, '■');
+                    txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                } 
+                if(i >= min_x && i <= max_x && j >= min_y && j <= max_y){
+                    txt.setForegroundColor(TextColor.ANSI.BLUE);
+                    txt.setBackgroundColor(TextColor.ANSI.RED);
+                    if(i > min_x && i <= max_x){
+                        txt.setCharacter(x + (i*2)- 1,y + j, ' ');    
+                    }
+                    txt.setCharacter(x + (i*2),y + j, '■');
+                    txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                }
+                
+                
+            }
+        }
+    }
+    /* 
     static void draw_board_wb(TextGraphics txt,int x, int y,int size,int min_x_selected, int max_x_selected, int min_y_seleccted, int max_y_selected){
         txt.enableModifiers(SGR.BOLD);
         for(int i = 0; i <size;i++){
@@ -121,5 +137,5 @@ public class Display {
         }
         
     }
-
+*/
 }

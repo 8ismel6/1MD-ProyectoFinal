@@ -17,12 +17,12 @@ public class Game {
         TerminalSize size = screen.getTerminalSize();
         int columns = size.getColumns();
         int mid_x = Display.center_x(columns, size_board * 2);
-        Player player = new Player();
-        Player bot = new Player();
+        Player player = new Player(size_board);
+        Player bot = new Player(size_board);
         Boat boat = new Boat();
         for(int i = 0; i <= 5; i++){
             boat.generate_boat();
-            int[] coordenates = put_boat(screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y);
+            int[] coordenates = put_boat(screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_bh());
         }
         /*while (true) {
             screen.clear();
@@ -57,7 +57,7 @@ public class Game {
        
     }
 
-    public static int[] put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2,int y1, int y2)throws IOException{
+    public static int[] put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2,int y1, int y2,int[][] board)throws IOException{
         int min_x = x1;
         int max_x = x2;
         int min_y = y1;
@@ -67,7 +67,8 @@ public class Game {
 
         while (true) {
             screen.clear();
-            Display.draw_board_wb(txt,mid, 0, size_board, min_x, max_x, min_y,max_y);
+            Display.draw_board(txt,mid, 0, size_board);
+            Display.draw_boats(txt, board, size_board, mid, 0, min_x, max_x, min_y, max_y);
             screen.refresh();
             KeyStroke key = screen.readInput();
             switch (key.getKeyType()) {
@@ -121,11 +122,13 @@ public class Game {
 
 class Board{
     private int[][] board;
-    public void board(int size){
+    public Board(int size){
         board = new int[size][size];
     }
     
     public int[][] get_board(){
+        board[1][10] = 1;
+        board[1][11] = 1;
         return board;
     }
 
@@ -172,15 +175,16 @@ class Boat{
     }
 }
 
+
 class Player{
     int[][] board_hidden;
     int[][] board_guess;
     Board bh;
     Board bg;
-    public void Player(int size){
-        bh = new Board();
+    public Player(int size){
+        bh = new Board(size);
         board_hidden = bh.get_board();
-        bg = new Board();
+        bg = new Board(size);
         board_guess = bg.get_board();
     }
 
