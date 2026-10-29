@@ -96,7 +96,7 @@ public class Display {
         for(int i = 0; i <size;i++){
             for(int j = 0; j<size;j++){   
                 if(board[i][j] == 1){
-                    txt.setForegroundColor(TextColor.ANSI.BLACK);
+                    txt.setForegroundColor(TextColor.ANSI.RED);
                     txt.setCharacter(x + (i*2),y + j, '■');
                     txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
                 } 

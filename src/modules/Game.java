@@ -20,42 +20,12 @@ public class Game {
         Player player = new Player(size_board);
         Player bot = new Player(size_board);
         Boat boat = new Boat();
-        for(int i = 0; i <= 5; i++){
+        int boat_quantity = 5;
+        for(int i = 0; i <= boat_quantity; i++){
             boat.generate_boat();
             put_boat(screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_bh(),player);
             
         }
-        /*while (true) {
-            screen.clear();
-            Display.draw_board(txt,20,0,size_board,x,y);
-            screen.refresh();
-            KeyStroke key = screen.readInput();
-            switch (key.getKeyType()) {
-                case ArrowUp:
-                    if(y - 1 >= 0){
-                        y -= 1;
-                    }
-                    break;
-                case ArrowDown:
-                    if(y + 1 < size_board){
-                        y += 1;
-                    }
-                    break;
-                case ArrowLeft:
-                    if(x - 1 >= 0){
-                        x -= 1;
-                    }
-                    break;
-                case ArrowRight:
-                    if(x + 1 < size_board){
-                        x += 1;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }*/
-       
     }
 
     public static void put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2,int y1, int y2,int[][] board,Player player)throws IOException{
@@ -166,7 +136,7 @@ class Boat{
 
     public void generate_boat(){
         Random a = new Random();
-        size = a.nextInt(6) + 3;
+        size = a.nextInt(3) + 3;
         if(a.nextInt(2) == 0){
             horizontal = false;
             max_x = 0;
