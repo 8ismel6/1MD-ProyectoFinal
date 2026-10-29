@@ -1,9 +1,8 @@
 package src.modules;
 
-
 import java.io.IOException;
 import java.util.Random;
-
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
@@ -16,19 +15,19 @@ public class Game {
         TextGraphics txt = screen.newTextGraphics();
         TerminalSize size = screen.getTerminalSize();
         int columns = size.getColumns();
-        int mid_x = Display.center_x(columns, size_board * 2);
+        int rows = size.getRows();
+        int mid_x = Display.center_x(columns, size_board * 2 - 1);
         Player player = new Player(size_board);
         Player bot = new Player(size_board);
         Boat boat = new Boat();
         int boat_quantity = 5;
         for(int i = 0; i <= boat_quantity; i++){
             boat.generate_boat();
-            put_boat(screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_bh(),player);
-            
+            put_boat(columns,screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_bh(),player);
         }
     }
 
-    public static void put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2,int y1, int y2,int[][] board,Player player)throws IOException{
+    public static void put_boat(int columns, Screen screen,TextGraphics txt,int mid,int x1,int x2,int y1, int y2,int[][] board,Player player)throws IOException{
         int min_x = x1;
         int max_x = x2;
         int min_y = y1;
@@ -38,8 +37,11 @@ public class Game {
 
         while (true) {
             screen.clear();
-            Display.draw_board(txt,mid, 0, size_board);
-            Display.draw_boats(txt, board, size_board, mid, 0, min_x, max_x, min_y, max_y);
+            txt.enableModifiers(SGR.BOLD);
+            txt.putString(Display.center_x(columns, Texts.title_put_board.length()), 1, Texts.title_put_board);
+            Display.draw_board(txt,mid, 3, size_board);
+            Display.draw_boats(txt, board, size_board, mid, 3, min_x, max_x, min_y, max_y);
+            txt.putString(Display.center_x(columns, Texts.title_down_put_boat.length()),(size_board + 4), Texts.title_down_put_boat);
             screen.refresh();
             KeyStroke key = screen.readInput();
             switch (key.getKeyType()) {

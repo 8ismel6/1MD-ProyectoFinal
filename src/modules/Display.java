@@ -86,6 +86,7 @@ public class Display {
                 txt.setForegroundColor(TextColor.ANSI.BLUE);
                 txt.setCharacter(x + (i*2),y + j, '■');
                 txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                txt.setForegroundColor(TextColor.ANSI.DEFAULT);
                 
             }
         }
@@ -99,6 +100,7 @@ public class Display {
                     txt.setForegroundColor(TextColor.ANSI.RED);
                     txt.setCharacter(x + (i*2),y + j, '■');
                     txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                    txt.setForegroundColor(TextColor.ANSI.DEFAULT);
                 } 
                 if(i >= min_x && i <= max_x && j >= min_y && j <= max_y){
                     txt.setForegroundColor(TextColor.ANSI.BLUE);
@@ -108,6 +110,7 @@ public class Display {
                     }
                     txt.setCharacter(x + (i*2),y + j, '■');
                     txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                    txt.setForegroundColor(TextColor.ANSI.DEFAULT);
                 }
                 
                 

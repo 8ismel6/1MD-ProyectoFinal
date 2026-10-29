@@ -11,6 +11,7 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import src.modules.Menu;
 import src.modules.Game;
 
+
 public class Main {
     public static void main(String[] args) {
 
