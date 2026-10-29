@@ -22,7 +22,8 @@ public class Game {
         Boat boat = new Boat();
         for(int i = 0; i <= 5; i++){
             boat.generate_boat();
-            int[] coordenates = put_boat(screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_bh());
+            put_boat(screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_bh(),player);
+            
         }
         /*while (true) {
             screen.clear();
@@ -57,12 +58,12 @@ public class Game {
        
     }
 
-    public static int[] put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2,int y1, int y2,int[][] board)throws IOException{
+    public static void put_boat(Screen screen,TextGraphics txt,int mid,int x1,int x2,int y1, int y2,int[][] board,Player player)throws IOException{
         int min_x = x1;
         int max_x = x2;
         int min_y = y1;
         int max_y = y2;
-        int[] coordenates = {min_x,max_x,min_y,max_y};
+        boolean boat_on = false;
 
 
         while (true) {
@@ -97,10 +98,14 @@ public class Game {
                     }
                     break;
                 case Enter:
-                    return coordenates;
+                    boat_on = player.set_boat(min_x, max_x, min_y, max_y);
+                    break;
                 default:
                     break;
                 
+            }
+            if(boat_on){
+                break;
             }
         }
     }
@@ -109,10 +114,10 @@ public class Game {
         int[][] board = p2.get_bh();
         boolean a;
         if(board[x][y] == 1){
-            a = p1.set_bg(x,y,true);
+            a = p1.set_bg(x,y);
         }
         else{
-            a = p1.set_bg(x,y,false);
+            a = p1.set_bg(x,y);
         }
         return a;
 
@@ -127,23 +132,23 @@ class Board{
     }
     
     public int[][] get_board(){
-        board[1][10] = 1;
-        board[1][11] = 1;
         return board;
     }
 
-    public boolean set_board(int x, int y, boolean boat_in_cell ){
+    public boolean set_board(int x, int y){
         if(board[x][y] != 1){
-            if(boat_in_cell){
-                board[x][y] = 2;
-            }
-            else{
-                board[x][y] = 1;
-            }
+            board[x][y] = 1;
             return true;
         }
         else{
-            return false;
+            if(board[x][y] == 1){
+                board[x][y] = 2;
+                return true;
+            }
+            else{
+                return false;
+            }
+
         }
     }
 
@@ -188,8 +193,35 @@ class Player{
         board_guess = bg.get_board();
     }
 
-    public boolean set_bg(int x, int y, boolean boat_in_cell){
-        boolean setting = bg.set_board(x, y, boat_in_cell);;
+    public boolean set_boat(int min_x, int max_x,int min_y, int max_y){
+        boolean boat_in = verifyi_boat_in(min_x, max_x, min_y, max_y);
+        if(!boat_in){
+            for(int x = min_x; x<= max_x;x++){
+                for(int y =min_y;y<=max_y;y++){
+                    board_hidden[x][y] = 1;
+                }
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean verifyi_boat_in(int min_x, int max_x,int min_y, int max_y){
+        boolean boat_in = false;
+        for(int x = min_x; x<= max_x;x++){
+            for(int y =min_y;y<=max_y;y++){
+                if(board_hidden[x][y] == 1){
+                    boat_in = true;
+                }
+            }
+        }
+        return boat_in;
+    }
+
+    public boolean set_bg(int x, int y){
+        boolean setting = bg.set_board(x, y);;
         return setting;
     }
 
@@ -197,5 +229,9 @@ class Player{
         return  bh.get_board();
     }
 
+    public boolean set_bh(int x,int y){
+        return bh.set_board(x, y);
+
+    }
 }
 
