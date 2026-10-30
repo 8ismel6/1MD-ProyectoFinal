@@ -7,25 +7,121 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.input.KeyStroke;
+//import java.util.Random;
 
 public class Game {
     static int size_board = 12;
-    
-    public static void game(Screen screen) throws IOException{
+
+    public static void game_loop(Screen screen) throws IOException{
         TextGraphics txt = screen.newTextGraphics();
         TerminalSize size = screen.getTerminalSize();
         int columns = size.getColumns();
         int rows = size.getRows();
         int mid_x = Display.center_x(columns, size_board * 2 - 1);
+
         Player player = new Player(size_board);
         Player bot = new Player(size_board);
         Boat boat = new Boat();
+        Random random = new Random();
+
+        boolean game = true;
         int boat_quantity = 5;
+
+        Boat bot_boat = new Boat();
+        for (int i = 0; i < boat_quantity; i++) {
+            bot_boat.generate_boat();
+            bot.set_boat_random_place(bot.get_board(), bot_boat.max_x, bot_boat.max_y, random, size_board);
+        }
         for(int i = 0; i <= boat_quantity; i++){
             boat.generate_boat();
-            put_boat(columns,screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_bh(),player);
+            put_boat(columns,screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_board(),player);
         }
+
+        game(screen, txt, mid_x, columns, bot, player);
     }
+
+    public static void game(Screen screen,TextGraphics txt,int mid_x,int columns,Player bot,Player player) throws IOException{
+        int turn = 0;
+        int x = 5;
+        int y = 5;
+        boolean playing = true;
+
+        int plays = 1;
+        int acerted = 0;
+
+        while (playing) {
+            if (turn == 0){
+                screen.clear();
+                txt.enableModifiers(SGR.BOLD);
+                Display.draw_board(txt,mid_x, 3, size_board,bot.pboard);
+                Display.draw_pointer(mid_x, 3, txt, x, y);
+                if (plays > 1){
+                    txt.putString(Display.center_x(columns, Texts.GameIndication4.length()), 1, Texts.GameIndication4);
+                }
+                else{
+                    txt.putString(Display.center_x(columns, Texts.GameIndication1.length()), 1, Texts.GameIndication1);
+                    txt.putString(Display.center_x(columns, Texts.GameIndication2.length()),(size_board + 4), Texts.GameIndication2);
+                }
+                screen.refresh();
+                KeyStroke key = screen.readInput();
+                switch (key.getKeyType()) {
+                    case ArrowUp:
+                        if(y - 1 >= 0){
+                            y -= 1;
+                        }
+                        break;
+                    case ArrowDown:
+                        if(y + 1 < size_board){
+                            y += 1;
+                        }
+                        break;
+                    case ArrowLeft:
+                        if(x - 1 >= 0){
+                            x -= 1;
+                        }
+                        break;
+                    case ArrowRight:
+                        if(x + 1 < size_board){
+                            x += 1;
+                        }
+                        break;
+                    case Enter:
+                        int[][] target = bot.pboard;
+                        if (target[x][y] == 1) {
+                            target[x][y] = 2;
+                            acerted += 1;
+                            turn = 1;
+                            plays += 1;
+                        } else if (target[x][y] == 0) {
+                            target[x][y] = 3; 
+                            turn = 1;
+                            plays += 1;
+                        }
+                        break;
+                    default:
+                        break;
+                    
+                }
+            }
+            
+            else{
+                screen.clear();
+                txt.putString(Display.center_x(columns, Texts.GameIndication5.length()), 1, Texts.GameIndication5);
+                Display.draw_board(txt,mid_x, 3, size_board,player.pboard);
+                screen.refresh();
+                Display.sleep(750);
+                Bot.Play(player.get_board(), size_board);
+                screen.refresh();
+                Display.sleep(750);
+                turn = 0;
+            }
+            if (!has_boats(bot.pboard)) {
+                playing = false;   
+            } else if (!has_boats(player.get_board())) {
+                playing = false;  
+            }
+        
+    }   }
 
     public static void put_boat(int columns, Screen screen,TextGraphics txt,int mid,int x1,int x2,int y1, int y2,int[][] board,Player player)throws IOException{
         int min_x = x1;
@@ -39,7 +135,7 @@ public class Game {
             screen.clear();
             txt.enableModifiers(SGR.BOLD);
             txt.putString(Display.center_x(columns, Texts.title_put_board.length()), 1, Texts.title_put_board);
-            Display.draw_board(txt,mid, 3, size_board);
+            Display.draw_board(txt,mid, 3, size_board,player.get_board());
             Display.draw_boats(txt, board, size_board, mid, 3, min_x, max_x, min_y, max_y);
             txt.putString(Display.center_x(columns, Texts.title_down_put_boat.length()),(size_board + 4), Texts.title_down_put_boat);
             screen.refresh();
@@ -82,14 +178,24 @@ public class Game {
         }
     }
 
+
+    static boolean has_boats(int[][] board) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == 1) return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean guess_boat(Player p1, Player p2, int x, int y){
-        int[][] board = p2.get_bh();
+        int[][] board = p2.get_board();
         boolean a;
         if(board[x][y] == 1){
-            a = p1.set_bg(x,y);
+            a = p1.set_board(x,y);
         }
         else{
-            a = p1.set_bg(x,y);
+            a = p1.set_board(x,y);
         }
         return a;
 
@@ -154,15 +260,11 @@ class Boat{
 
 
 class Player{
-    int[][] board_hidden;
-    int[][] board_guess;
-    Board bh;
-    Board bg;
+    int[][] pboard;
+    Board board;
     public Player(int size){
-        bh = new Board(size);
-        board_hidden = bh.get_board();
-        bg = new Board(size);
-        board_guess = bg.get_board();
+        board = new Board(size);
+        pboard = board.get_board();
     }
 
     public boolean set_boat(int min_x, int max_x,int min_y, int max_y){
@@ -170,7 +272,7 @@ class Player{
         if(!boat_in){
             for(int x = min_x; x<= max_x;x++){
                 for(int y =min_y;y<=max_y;y++){
-                    board_hidden[x][y] = 1;
+                    pboard[x][y] = 1;
                 }
             }
             return true;
@@ -184,7 +286,7 @@ class Player{
         boolean boat_in = false;
         for(int x = min_x; x<= max_x;x++){
             for(int y =min_y;y<=max_y;y++){
-                if(board_hidden[x][y] == 1){
+                if(pboard[x][y] == 1){
                     boat_in = true;
                 }
             }
@@ -192,18 +294,40 @@ class Player{
         return boat_in;
     }
 
-    public boolean set_bg(int x, int y){
-        boolean setting = bg.set_board(x, y);;
-        return setting;
+    public int[][] get_board(){
+        return  board.get_board();
     }
 
-    public int[][] get_bh(){
-        return  bh.get_board();
-    }
-
-    public boolean set_bh(int x,int y){
-        return bh.set_board(x, y);
+    public boolean set_board(int x,int y){
+        return board.set_board(x, y);
 
     }
+
+   public void set_boat_random_place(int[][] board, int max_x, int max_y, Random random, int size_board){
+    while (true) {
+        int x = random.nextInt(size_board - max_x);
+        int y = random.nextInt(size_board - max_y);
+
+        boolean free = true;
+        for (int i = x; i <= x + max_x && free; i++) {
+            for (int j = y; j <= y + max_y; j++) {
+                if (board[i][j] == 1) {
+                    free = false;
+                    break;
+                }
+            }
+        }
+
+        if (free) {
+            for (int i = x; i <= x + max_x; i++) {
+                for (int j = y; j <= y + max_y; j++) {
+                    board[i][j] = 1;
+                }
+            }
+            return;
+        }
+    }
+}
+
 }
 

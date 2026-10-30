@@ -23,9 +23,14 @@ public class Texts {
     public static String title_down_put_boat = "--- Flechas para mover Enter para ponerlo ---";
     public static String username = "";
     public static String blank_space = "                      ";
-    public static final String blank_space_board = "    ";
+    public static String blank_space_board = "    ";
     public static String warning = "(No se puede borrar y max. 20 caracteres)";
     public static String warning_two = "(Up para aumentar Down para disminuir)";
 
     //------- Game ----------
+    public static String GameIndication1 = "--  Muevete con las flechas --";
+    public static String GameIndication2 = "-- Da enter para seleccionar la casilla a disparar --";
+    public static String GameIndication3 = "-- Herraste tu tiro --";
+    public static String GameIndication4 = "-- Tu turno --";
+    public static String GameIndication5 = "-- Turno rival --";
 }

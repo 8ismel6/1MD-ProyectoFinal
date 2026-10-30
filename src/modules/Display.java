@@ -2,8 +2,6 @@ package src.modules;
 //Styles and utilities
 
 import java.io.IOException;
-import java.util.Random;
-
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -11,6 +9,14 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 
 public class Display {
+    static void sleep(int sleep){
+        try {
+            Thread.sleep(sleep);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     static int center_x(int total, int width) {
         return (total - width) / 2;
     }
@@ -79,15 +85,29 @@ public class Display {
     }
 
     //SE NECESITA UNA FUENTE DE TERMINAL ESPECIFICA
-    static void draw_board(TextGraphics txt,int x, int y,int size){
+    static void draw_board(TextGraphics txt,int x, int y,int size,int[][] board){
         txt.enableModifiers(SGR.BOLD);
         for(int i = 0; i <size;i++){
-            for(int j = 0; j<size;j++){    
-                txt.setForegroundColor(TextColor.ANSI.BLUE);
-                txt.setCharacter(x + (i*2),y + j, '■');
-                txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
-                txt.setForegroundColor(TextColor.ANSI.DEFAULT);
-                
+            for(int j = 0; j<size;j++){
+                if (board[i][j] == 2) {
+                    txt.setForegroundColor(TextColor.ANSI.RED);
+                    txt.setCharacter(x + (i*2),y + j, 'x');
+                    txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                    txt.setForegroundColor(TextColor.ANSI.DEFAULT);
+                }
+                else{
+                    if (board[i][j] == 3) {
+                        txt.setForegroundColor(TextColor.ANSI.BLACK);
+                        txt.setCharacter(x + (i*2),y + j, '■');
+                        txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                        txt.setForegroundColor(TextColor.ANSI.DEFAULT);
+                    }
+                    else{
+                        txt.setForegroundColor(TextColor.ANSI.BLUE);
+                        txt.setCharacter(x + (i*2),y + j, '■');
+                        txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                        txt.setForegroundColor(TextColor.ANSI.DEFAULT);
+                }   }     
             }
         }
         
@@ -116,5 +136,17 @@ public class Display {
                 
             }
         }
+    }
+
+    static void bot_animation(){
+        
+    }
+
+    static void draw_pointer(int mid, int top, TextGraphics txt, int x, int y) {
+        txt.setForegroundColor(TextColor.ANSI.BLUE);
+        txt.setBackgroundColor(TextColor.ANSI.RED);
+        txt.setCharacter(mid + x * 2, top + y, '■');
+        txt.setForegroundColor(TextColor.ANSI.DEFAULT);
+        txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
     }
 }
