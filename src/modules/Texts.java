@@ -26,7 +26,7 @@ public class Texts {
     public static String title_username = "--- Ingrese nombre de usuario ---";
     public static String title_board_size = "--- Ingrese el tamañno del tablero ---";
     public static String title_dificult = "--- Seleccione la dificultad ---";
-    public static String title_velocity = "--- Seleccione la velocidad ---";
+    public static String title_velocity = "- Seleccione la velocidad de animaciones (1 recomendado) -";
     public static String title_put_boat = "--- Selecciona la posicion de tus barcos ---";
     public static String title_down_put_boat = "--- Flechas para mover Enter para ponerlo ---";
     public static String username = "";
