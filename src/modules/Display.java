@@ -97,8 +97,8 @@ public class Display {
                 }
                 else{
                     if (board[i][j] == 3) {
-                        txt.setForegroundColor(TextColor.ANSI.BLACK);
-                        txt.setCharacter(x + (i*2),y + j, '■');
+                        txt.setForegroundColor(TextColor.ANSI.WHITE);
+                        txt.setCharacter(x + (i*2),y + j, '0');
                         txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
                         txt.setForegroundColor(TextColor.ANSI.DEFAULT);
                     }
@@ -113,7 +113,20 @@ public class Display {
         
     }
 
-    static void draw_boats(TextGraphics txt,int[][] board,int size, int x, int y, int min_x, int max_x, int min_y, int max_y){
+    static void draw_boats(TextGraphics txt,int[][] board,int size, int x, int y){
+        for(int i = 0; i <size;i++){
+            for(int j = 0; j<size;j++){   
+                if(board[i][j] == 1){
+                    txt.setForegroundColor(TextColor.ANSI.RED);
+                    txt.setCharacter(x + (i*2),y + j, '■');
+                    txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                    txt.setForegroundColor(TextColor.ANSI.DEFAULT);
+                }             
+            }
+        }
+    }
+    
+    static void draw_boats_and_pointer(TextGraphics txt,int[][] board,int size, int x, int y, int min_x, int max_x, int min_y, int max_y){
         for(int i = 0; i <size;i++){
             for(int j = 0; j<size;j++){   
                 if(board[i][j] == 1){

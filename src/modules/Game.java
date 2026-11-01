@@ -11,6 +11,9 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 public class Game {
     static int size_board = 12;
+    static int dificult = 0;
+    static int velocity = 1;
+    static int sleep_time = 750 ;
 
     public static void game_loop(Screen screen) throws IOException{
         TextGraphics txt = screen.newTextGraphics();
@@ -37,13 +40,21 @@ public class Game {
             put_boat(columns,screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_board(),player);
         }
 
-        game(screen, txt, mid_x, columns, bot, player);
+        game(screen, txt, mid_x, columns, bot, player,player.get_board());
     }
 
-    public static void game(Screen screen,TextGraphics txt,int mid_x,int columns,Player bot,Player player) throws IOException{
+    public static void game(Screen screen,TextGraphics txt,int mid_x,int columns,Player bot,Player player,int[][] pboard) throws IOException{
         int turn = 0;
-        int x = 5;
-        int y = 5;
+        int x = 0;
+        int y = 0;
+        if(size_board % 2 == 0){
+            x= size_board /2;
+            y = size_board /2;
+        }
+        else{
+            x= (int) Math.ceil(size_board/2);
+            y=(int) Math.ceil(size_board/2);
+        }
         boolean playing = true;
 
         int plays = 1;
@@ -90,12 +101,25 @@ public class Game {
                         if (target[x][y] == 1) {
                             target[x][y] = 2;
                             acerted += 1;
-                            turn = 1;
                             plays += 1;
+                            screen.clear();
+                            txt.enableModifiers(SGR.BOLD);
+                            Display.draw_board(txt,mid_x, 3, size_board,bot.pboard);
+                            Display.draw_pointer(mid_x, 3, txt, x, y);
+                            txt.putString(Display.center_x(columns, Texts.acerted.length()), 1, Texts.acerted);
+                            screen.refresh();
+                            Display.sleep(sleep_time);
                         } else if (target[x][y] == 0) {
                             target[x][y] = 3; 
                             turn = 1;
                             plays += 1;
+                            screen.clear();
+                            txt.enableModifiers(SGR.BOLD);
+                            Display.draw_board(txt,mid_x, 3, size_board,bot.pboard);
+                            Display.draw_pointer(mid_x, 3, txt, x, y);
+                            txt.putString(Display.center_x(columns, Texts.missed.length()), 1, Texts.missed);
+                            screen.refresh();
+                            Display.sleep(sleep_time);
                         }
                         break;
                     default:
@@ -108,11 +132,12 @@ public class Game {
                 screen.clear();
                 txt.putString(Display.center_x(columns, Texts.GameIndication5.length()), 1, Texts.GameIndication5);
                 Display.draw_board(txt,mid_x, 3, size_board,player.pboard);
+                Display.draw_boats(txt, pboard, size_board, mid_x, 3);
                 screen.refresh();
-                Display.sleep(750);
-                Bot.Play(player.get_board(), size_board);
+                Display.sleep(sleep_time);
+                //Bot.Play(player.get_board(), size_board);
                 screen.refresh();
-                Display.sleep(750);
+                Display.sleep(sleep_time);
                 turn = 0;
             }
             if (!has_boats(bot.pboard)) {
@@ -134,9 +159,9 @@ public class Game {
         while (true) {
             screen.clear();
             txt.enableModifiers(SGR.BOLD);
-            txt.putString(Display.center_x(columns, Texts.title_put_board.length()), 1, Texts.title_put_board);
+            txt.putString(Display.center_x(columns, Texts.title_put_boat.length()), 1, Texts.title_put_boat);
             Display.draw_board(txt,mid, 3, size_board,player.get_board());
-            Display.draw_boats(txt, board, size_board, mid, 3, min_x, max_x, min_y, max_y);
+            Display.draw_boats_and_pointer(txt, board, size_board, mid, 3, min_x, max_x, min_y, max_y);
             txt.putString(Display.center_x(columns, Texts.title_down_put_boat.length()),(size_board + 4), Texts.title_down_put_boat);
             screen.refresh();
             KeyStroke key = screen.readInput();
