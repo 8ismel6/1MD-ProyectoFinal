@@ -3,9 +3,9 @@ import java.util.Random;
 
 public class Bot {
     public static Random random = new Random();
-    public static int acuracity = 2;
+    public static int acuracity = 4 /(Game.dificult + 1);
 
-    public static void Play(int[][] board, int size) {
+    public static boolean Play(int[][] board, int size) {
         int target = 0;
         if (random.nextInt(acuracity) == 0) {
             target = 1;
@@ -17,8 +17,6 @@ public class Bot {
             target = 1 - target;
             count = count_cells(board, size, target);
         }
-
-        if (count > 0) {
             int n = random.nextInt(count);
             int k = 0;
             for (int i = 0; i < size; i++) {
@@ -26,12 +24,18 @@ public class Bot {
                     if (board[i][j] == target) {
                         if (k == n) {
                             shoot(board, i, j);
+                            if(target == 1){
+                                return true;
+                            }
+                            else{
+                                return false;
+                            }
                         }
                         k++;
                     }
                 }
             }
-        }
+            return false;
     }
 
     private static int count_cells(int[][] board, int size, int value) {

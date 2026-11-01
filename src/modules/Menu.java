@@ -27,7 +27,10 @@ public class Menu {
         int boat_x = Display.center_x(columns, Display.max_line_width(Texts.boat));
         for (int i = 0; i < Texts.boat.length; i++) {
             txt.putString(boat_x, 2 + i, Texts.boat[i]);
-        }
+        } 
+        draw_options(txt,menu,columns,dificult);
+    }
+    private static void draw_options(TextGraphics txt,int menu,int columns,int dificult){
         switch ((menu)) {
             case 0:
                 txt.putString(Display.center_x(columns, Texts.title.length()), Texts.boat.length + 2, Texts.title);
@@ -45,14 +48,9 @@ public class Menu {
                 txt.setBackgroundColor(TextColor.ANSI.BLACK);
                 txt.putString(Display.center_x(columns, Texts.blank_space_board.length()), Texts.boat.length + 4, Texts.blank_space_board);
                 txt.putString(Display.center_x(columns, 2), Texts.boat.length + 4, Integer.toString(Game.size_board));
-                txt.putString(Display.center_x(columns, Texts.warning_two.length()), Texts.boat.length + 6, Texts.warning_two);
                 txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
                 txt.putString(Display.center_x(columns, Texts.title_board_size.length()), Texts.boat.length + 2, Texts.title_board_size);
                 txt.putString(Display.center_x(columns, Texts.warning_two.length()), Texts.boat.length + 6, Texts.warning_two);
-                txt.setBackgroundColor(TextColor.ANSI.BLACK);
-                txt.putString(Display.center_x(columns, Texts.blank_space_board.length()), Texts.boat.length + 4, Texts.blank_space_board);
-                txt.putString(Display.center_x(columns, 2), Texts.boat.length + 4, Integer.toString(Game.size_board));
-                txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
                 break;
             case 3:
                 txt.putString(Display.center_x(columns, Texts.title_dificult.length()), Texts.boat.length + 3, Texts.title_dificult); 
@@ -67,13 +65,14 @@ public class Menu {
             case 4:
                 txt.putString(Display.center_x(columns, Texts.title_velocity.length()), Texts.boat.length + 3, Texts.title_velocity);
                 txt.setBackgroundColor(TextColor.ANSI.BLACK);
-                txt.putString(Display.center_x(columns, Texts.blank_space_velocity.length()), Texts.boat.length + 4, Texts.blank_space_velocity);
-                txt.putString(Display.center_x(columns, 2), Texts.boat.length + 4, Integer.toString(Game.velocity));
+                txt.putString(Display.center_x(columns, Texts.blank_space_velocity.length()) , Texts.boat.length + 5, Texts.blank_space_velocity);
+                txt.putString(Display.center_x(columns, 2), Texts.boat.length + 5, "x" +Integer.toString(Game.velocity));
                 txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                txt.putString(Display.center_x(columns, Texts.subtitle_velocity.length()), Texts.boat.length + 7, Texts.subtitle_velocity);
                 break;
             default:
                 break;
-        }    
+        }   
     }
 
     private static void draw_menu(TextGraphics txt, int columns, int selected,int menu,int dificult) {

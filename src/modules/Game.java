@@ -29,17 +29,18 @@ public class Game {
 
         boolean game = true;
         int boat_quantity = 5;
+        int[] boat_sizes = new int[5];
 
         Boat bot_boat = new Boat();
         for (int i = 0; i < boat_quantity; i++) {
-            bot_boat.generate_boat();
+            bot_boat.generate_boat(random.nextInt(3)+3);
+            boat_sizes[i] = bot_boat.size;
             bot.set_boat_random_place(bot.get_board(), bot_boat.max_x, bot_boat.max_y, random, size_board);
         }
-        for(int i = 0; i <= boat_quantity; i++){
-            boat.generate_boat();
+        for(int i = 0; i < boat_quantity; i++){
+            boat.generate_boat(boat_sizes[i]);
             put_boat(columns,screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_board(),player);
         }
-
         game(screen, txt, mid_x, columns, bot, player,player.get_board());
     }
 
@@ -137,10 +138,18 @@ public class Game {
                 Display.draw_boats(txt, pboard, size_board, mid_x, 3);
                 screen.refresh();
                 Display.sleep(sleep_time);
-                Bot.Play(player.get_board(), size_board);
+                if(!Bot.Play(player.get_board(), size_board)){
+                    turn = 0;
+                    txt.putString(Display.center_x(columns, Texts.bot_missed.length()), 1, Texts.bot_missed);
+
+                }
+                else{
+                    txt.putString(Display.center_x(columns, Texts.bot_acerted.length()), 1, Texts.bot_acerted);
+                }
+                Display.draw_board(txt,mid_x, 3, size_board,player.pboard);
+                Display.draw_boats(txt, pboard, size_board, mid_x, 3);
                 screen.refresh();
                 Display.sleep(sleep_time);
-                turn = 0;
             }
             if (!has_boats(bot.pboard)) {
                 playing = false;   
@@ -269,9 +278,9 @@ class Boat{
     public int max_y;
     public int max_x;
 
-    public void generate_boat(){
+    public void generate_boat(int size_boat){
         Random a = new Random();
-        size = a.nextInt(3) + 3;
+        size = size_boat;
         if(a.nextInt(2) == 0){
             horizontal = false;
             max_x = 0;
