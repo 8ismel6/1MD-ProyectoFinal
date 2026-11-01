@@ -59,6 +59,7 @@ public class Game {
 
         int plays = 1;
         int acerted = 0;
+        int missed = 0;
 
         while (playing) {
             if (turn == 0){
@@ -112,6 +113,7 @@ public class Game {
                         } else if (target[x][y] == 0) {
                             target[x][y] = 3; 
                             turn = 1;
+                            missed += 1;
                             plays += 1;
                             screen.clear();
                             txt.enableModifiers(SGR.BOLD);
@@ -135,7 +137,7 @@ public class Game {
                 Display.draw_boats(txt, pboard, size_board, mid_x, 3);
                 screen.refresh();
                 Display.sleep(sleep_time);
-                //Bot.Play(player.get_board(), size_board);
+                Bot.Play(player.get_board(), size_board);
                 screen.refresh();
                 Display.sleep(sleep_time);
                 turn = 0;

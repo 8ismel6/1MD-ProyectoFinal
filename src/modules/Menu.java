@@ -28,60 +28,52 @@ public class Menu {
         for (int i = 0; i < Texts.boat.length; i++) {
             txt.putString(boat_x, 2 + i, Texts.boat[i]);
         }
-        if(menu == 0){
-            txt.putString(Display.center_x(columns, Texts.title.length()), Texts.boat.length + 2, Texts.title);
-            
-        }
-        else{
-            if(menu == 1){
+        switch ((menu)) {
+            case 0:
+                txt.putString(Display.center_x(columns, Texts.title.length()), Texts.boat.length + 2, Texts.title);
+                break;
+            case 1:
                 txt.putString(Display.center_x(columns, Texts.title_username.length()), Texts.boat.length + 2, Texts.title_username);
                 txt.putString(Display.center_x(columns, Texts.warning.length()), Texts.boat.length + 7, Texts.warning);
                 txt.setBackgroundColor(TextColor.ANSI.BLACK);
                 txt.putString(Display.center_x(columns, Texts.blank_space.length()) , Texts.boat.length + 4, Texts.blank_space);
                 txt.putString(Display.center_x(columns, username.length()), Texts.boat.length + 4, username);
                 txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
-            }
-            else{
-                if(menu == 2){
-                    txt.putString(Display.center_x(columns, Texts.title_board_size.length()), Texts.boat.length + 2, Texts.title_board_size);
-                    txt.setBackgroundColor(TextColor.ANSI.BLACK);
-                    txt.putString(Display.center_x(columns, Texts.blank_space_board.length()), Texts.boat.length + 4, Texts.blank_space_board);
-                    txt.putString(Display.center_x(columns, 2), Texts.boat.length + 4, Integer.toString(Game.size_board));
-                    txt.putString(Display.center_x(columns, Texts.warning_two.length()), Texts.boat.length + 6, Texts.warning_two);
-                    txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
-
-                    txt.putString(Display.center_x(columns, Texts.title_board_size.length()), Texts.boat.length + 2, Texts.title_board_size);
-                    txt.putString(Display.center_x(columns, Texts.warning_two.length()), Texts.boat.length + 6, Texts.warning_two);
-                    txt.setBackgroundColor(TextColor.ANSI.BLACK);
-                    txt.putString(Display.center_x(columns, Texts.blank_space_board.length()), Texts.boat.length + 4, Texts.blank_space_board);
-                    txt.putString(Display.center_x(columns, 2), Texts.boat.length + 4, Integer.toString(Game.size_board));
-                    txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
-                }
-                else{
-                    if(menu == 3){
-                        txt.putString(Display.center_x(columns, Texts.title_dificult.length()), Texts.boat.length + 3, Texts.title_dificult); 
-                        for(int i = 0; i<= 3; i++){
-                            
-                            if(dificult == i){
-                                txt.setBackgroundColor(TextColor.ANSI.WHITE);
-                            }
-                            txt.putString(Display.center_x(columns, Texts.dificulty[i].length()),12+i, Texts.dificulty[i]);
-                            txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                break;
+            case 2:
+                txt.putString(Display.center_x(columns, Texts.title_board_size.length()), Texts.boat.length + 2, Texts.title_board_size);
+                txt.setBackgroundColor(TextColor.ANSI.BLACK);
+                txt.putString(Display.center_x(columns, Texts.blank_space_board.length()), Texts.boat.length + 4, Texts.blank_space_board);
+                txt.putString(Display.center_x(columns, 2), Texts.boat.length + 4, Integer.toString(Game.size_board));
+                txt.putString(Display.center_x(columns, Texts.warning_two.length()), Texts.boat.length + 6, Texts.warning_two);
+                txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                txt.putString(Display.center_x(columns, Texts.title_board_size.length()), Texts.boat.length + 2, Texts.title_board_size);
+                txt.putString(Display.center_x(columns, Texts.warning_two.length()), Texts.boat.length + 6, Texts.warning_two);
+                txt.setBackgroundColor(TextColor.ANSI.BLACK);
+                txt.putString(Display.center_x(columns, Texts.blank_space_board.length()), Texts.boat.length + 4, Texts.blank_space_board);
+                txt.putString(Display.center_x(columns, 2), Texts.boat.length + 4, Integer.toString(Game.size_board));
+                txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                break;
+            case 3:
+                txt.putString(Display.center_x(columns, Texts.title_dificult.length()), Texts.boat.length + 3, Texts.title_dificult); 
+                    for(int i = 0; i<= 3; i++){                            
+                        if(dificult == i){
+                            txt.setBackgroundColor(TextColor.ANSI.WHITE);
                         }
-                    }
-                    else{
-                        txt.putString(Display.center_x(columns, Texts.title_velocity.length()), Texts.boat.length + 3, Texts.title_velocity);
-                        txt.setBackgroundColor(TextColor.ANSI.BLACK);
-                        txt.putString(Display.center_x(columns, Texts.blank_space_velocity.length()), Texts.boat.length + 4, Texts.blank_space_velocity);
-                        txt.putString(Display.center_x(columns, 2), Texts.boat.length + 4, Integer.toString(Game.velocity));
+                        txt.putString(Display.center_x(columns, Texts.dificulty[i].length()),12+i, Texts.dificulty[i]);
                         txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
                     }
-                }
-                
-
-            }
-        }     
-        
+                break;
+            case 4:
+                txt.putString(Display.center_x(columns, Texts.title_velocity.length()), Texts.boat.length + 3, Texts.title_velocity);
+                txt.setBackgroundColor(TextColor.ANSI.BLACK);
+                txt.putString(Display.center_x(columns, Texts.blank_space_velocity.length()), Texts.boat.length + 4, Texts.blank_space_velocity);
+                txt.putString(Display.center_x(columns, 2), Texts.boat.length + 4, Integer.toString(Game.velocity));
+                txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                break;
+            default:
+                break;
+        }    
     }
 
     private static void draw_menu(TextGraphics txt, int columns, int selected,int menu,int dificult) {
@@ -104,31 +96,29 @@ public class Menu {
             screen.clear();
             draw_menu(txt, size.getColumns(), selected,menu,Game.dificult);
             screen.refresh();
-                                                          
-            if (menu == 0){
-
-                KeyStroke key = screen.readInput();
-            switch (key.getKeyType()) {
-                case ArrowUp:
-                    selected = 0;
-                    break;
-                case ArrowDown:
-                    selected = 1;
-                    break;
-                case Enter:
-                    if(selected == 1){
-                        return selected;
+            KeyStroke key = screen.readInput();
+            switch(menu){
+                case 0:
+                    switch (key.getKeyType()) {
+                    case ArrowUp:
+                        selected = 0;
+                        break;
+                    case ArrowDown:
+                        selected = 1;
+                        break;
+                    case Enter:
+                        if(selected == 1){
+                            return selected;
+                        }
+                        else{
+                            menu = 1;
+                        }
+                        break;
+                    default:
+                        break;
                     }
-                    else{
-                        menu = 1;
-                    }
                     break;
-                default:
-                    break;
-            }
-            }
-            else{
-                if(menu == 1){
+                case 1:
                     String username_input;
                     if (username.length() < 20){
                         username_input =Display.get_username_input(screen);
@@ -145,75 +135,70 @@ public class Menu {
                         }
                         menu = 2;
                     }
-                }
-                else{
-                    if(menu == 2){
-                        KeyStroke key = screen.readInput();
-                        switch (key.getKeyType()) {
-                            case ArrowUp:
-                                if(Game.size_board <= 24){
-                                    Game.size_board ++;
-                                }
-                                break;
-                            case ArrowDown:
-                                if(Game.size_board >= 13){
-                                    Game.size_board -= 1;
-                                }
-                                break;
-                            case Enter:
-                                menu = 3;
-                            default:
-                                break;
-                        }
-                    }
-                    else{
-                        if(menu == 3){
-                            KeyStroke key = screen.readInput();
-                            switch (key.getKeyType()) {
-                                case ArrowUp:
-                                    if(Game.dificult ==0){
-                                        Game.dificult = 3;
-                                    }
-                                    else{
-                                        Game.dificult-= 1;
-                                    }
-                                    break;
-                                case ArrowDown:
-                                    if(Game.dificult == 3){
-                                        Game.dificult = 0;
-                                    }
-                                    else{
-                                        Game.dificult += 1;
-                                    }
-                                    break;
-                                case Enter:
-                                    menu = 4;
-                                default:
-                                    break;
+                    break;
+                case 2:
+                    switch (key.getKeyType()) {
+                        case ArrowUp:
+                            if(Game.size_board <= 24){
+                                Game.size_board ++;
                             }
+                            break;
+                        case ArrowDown:
+                            if(Game.size_board >= 13){
+                                Game.size_board -= 1;
+                            }
+                            break;
+                        case Enter:
+                            menu = 3;
+                        default:
+                            break;
                         }
-                        else{
-                            KeyStroke key = screen.readInput();
+                    break;
+                case 3:
                         switch (key.getKeyType()) {
                             case ArrowUp:
-                                if(Game.velocity <= 3){
-                                    Game.velocity ++;
+                                if(Game.dificult ==0){
+                                    Game.dificult = 3;
+                                }
+                                else{
+                                    Game.dificult-= 1;
                                 }
                                 break;
                             case ArrowDown:
-                                if(Game.velocity >= 2){
-                                    Game.velocity-= 1;
+                                if(Game.dificult == 3){
+                                    Game.dificult = 0;
+                                }
+                                else{
+                                    Game.dificult += 1;
                                 }
                                 break;
                             case Enter:
-                                Game.sleep_time = 750 / Game.velocity;
-                                return selected;
+                                menu = 4;
                             default:
                                 break;
-                        }
-                        }
+                            }
+                    break;
+                case 4:
+                    switch (key.getKeyType()) {
+                        case ArrowUp:
+                            if(Game.velocity <= 3){
+                                Game.velocity ++;
+                            }
+                            break;
+                        case ArrowDown:
+                            if(Game.velocity >= 2){
+                                Game.velocity-= 1;
+                            }
+                            break;
+                        case Enter:
+                            Game.sleep_time = 750 / Game.velocity;
+                            return selected;
+                        default:
+                            break;
                     }
-                }
+                    break;
+                default:
+                    break;
             }
         }
     }
