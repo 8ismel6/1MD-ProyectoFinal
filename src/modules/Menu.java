@@ -16,7 +16,7 @@ public class Menu {
     static char[] box_style = {'┌', '┐', '└', '┘', '─', '│'};
     static int box_width = 60;
     static int box_height = 20;
-    static  String username = "";
+    static String username = "";
     
 
 
@@ -119,17 +119,12 @@ public class Menu {
                     break;
                 case 1:
                     String username_input;
-                    if (username.length() < 20){
-                        username_input =Display.get_username_input(screen);
-                        if(username_input != null){
-                            username += username_input;
-                        }
+                    username_input =Display.get_username_input(screen);
+                    if(username_input != null && username.length() < 20){
+                        username += username_input;
                     }
-                    else{
-                        username_input = Display.get_username_input(screen);
-                    }
-                    if (username_input == null){
-                        if(username.equals("")){
+                    if(username_input == null){
+                        if (username_input.equals("")){
                             username = "user";
                         }
                         menu = 2;
@@ -196,6 +191,53 @@ public class Menu {
                             break;
                     }
                     break;
+                default:
+                    break;
+            }
+        }
+    }
+    
+    public static int menu_end(TextGraphics txt,Screen screen,boolean win,int columns) throws IOException{
+        int selected = 0;
+        String user = "- Hola, " + username + " estas son tus estadisticas";
+        String plays = "- Intentos realizados: " +Integer.toString(Game.plays);
+        String acerted = "- Intentos acertados: " + Integer.toString(Game.acerted);
+        String missed = "- Intentos fallidos: " + Integer.toString(Game.missed);
+        while (true) {
+            screen.clear();
+            Display.draw_box(txt, Display.center_x(columns, box_width), 0, box_width, box_height, box_style);  
+            txt.putString(Display.center_x(columns, plays.length()) -4 , 2, user);
+            txt.putString(Display.center_x(columns, plays.length()) -4  , 3, plays);
+            txt.putString(Display.center_x(columns, plays.length()) -4 , 4, acerted);
+            txt.putString(Display.center_x(columns, plays.length()) -4, 5, missed);
+            if(win){
+                txt.putString(Display.center_x(columns, Texts.title_win.length()), Texts.boat.length + 2, Texts.title_win);
+            }
+            else{
+                txt.putString(Display.center_x(columns, Texts.title_lose.length()), Texts.boat.length + 2, Texts.title_lose);
+            }
+            Display.draw_options(txt, Texts.final_options, selected, Display.center_x(columns, Display.max_line_width(Texts.options)), Texts.boat.length + 4, 2);
+            screen.refresh();
+            KeyStroke key = screen.readInput();
+            switch (key.getKeyType()) {
+                case ArrowUp:
+                    if(selected == 0){
+                        selected = 2;
+                    }
+                    else{
+                        selected -= 1;
+                    }
+                    break;
+                case ArrowDown:
+                    if(selected == 2){
+                        selected = 0;
+                    }
+                    else{
+                        selected += 1;
+                    }
+                    break;
+                case Enter:
+                    return selected;
                 default:
                     break;
             }

@@ -12,6 +12,11 @@ public class Texts {
         "  \\   o * o * * o o  /",
         "   \\----------------/"
     };
+    public static String[] final_options = {
+        "[  Jugar  ]",
+        "[ Guardar ]",
+        "[  Salir  ]"
+    };
     public static String[] options = {
         "[  Jugar  ]",
         "[  Salir  ]"
@@ -29,8 +34,9 @@ public class Texts {
     public static String title_velocity = "--- Seleccione la velocidad de animaciones ---";
     public static String title_put_boat = "--- Selecciona la posicion de tus barcos ---";
     public static String title_down_put_boat = "--- Flechas para mover Enter para ponerlo ---";
+    public static String title_win = "--- ¡Ganaste! ---";
+    public static String title_lose = "--- ¡Perdiste! ---";
     public static String subtitle_velocity = "(x1 recomendado)";
-    public static String username = "";
     public static String blank_space = "                      ";
     public static String blank_space_board = "    ";
     public static String blank_space_velocity = "    ";

@@ -13,7 +13,10 @@ public class Game {
     static int size_board = 12;
     static int dificult = 0;
     static int velocity = 1;
-    static int sleep_time = 750 ;
+    static int sleep_time = 750;
+    static int plays = 1;
+    static int acerted = 0;
+    static int missed = 0;
 
     public static void game_loop(Screen screen) throws IOException{
         TextGraphics txt = screen.newTextGraphics();
@@ -48,6 +51,7 @@ public class Game {
         int turn = 0;
         int x = 0;
         int y = 0;
+        reset_game(screen, player, bot);
         if(size_board % 2 == 0){
             x= size_board /2;
             y = size_board /2;
@@ -57,10 +61,6 @@ public class Game {
             y=(int) Math.ceil(size_board/2);
         }
         boolean playing = true;
-
-        int plays = 1;
-        int acerted = 0;
-        int missed = 0;
 
         while (playing) {
             if (turn == 0){
@@ -151,10 +151,16 @@ public class Game {
                 screen.refresh();
                 Display.sleep(sleep_time);
             }
+            int a = 3;
             if (!has_boats(bot.pboard)) {
-                playing = false;   
+                playing = false;
+                a = Menu.menu_end(txt, screen, true, columns);   
             } else if (!has_boats(player.get_board())) {
                 playing = false;  
+                a = Menu.menu_end(txt, screen, false, columns);
+            }
+            if( a == 0){
+                reset_game(screen,player, bot);
             }
         
     }   }
@@ -237,6 +243,12 @@ public class Game {
 
     }
 
+    public static void reset_game(Screen screen,Player player, Player bot) throws IOException{
+        bot.reset_board(size_board);
+        player.reset_board(size_board);
+        //game_loop(screen);
+    }
+
 }
 
 class Board{
@@ -299,6 +311,10 @@ class Player{
     int[][] pboard;
     Board board;
     public Player(int size){
+        board = new Board(size);
+        pboard = board.get_board();
+    }
+    public void reset_board(int size){
         board = new Board(size);
         pboard = board.get_board();
     }
