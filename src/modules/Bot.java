@@ -3,7 +3,7 @@ import java.util.Random;
 
 public class Bot {
     public static Random random = new Random();
-    public static int acuracity = 4 /(Game.dificult + 1);
+    public static int acuracity = 4 -Game.dificult;
 
     public static boolean Play(int[][] board, int size) {
         int target = 0;

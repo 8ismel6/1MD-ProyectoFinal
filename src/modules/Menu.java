@@ -118,16 +118,26 @@ public class Menu {
                     }
                     break;
                 case 1:
-                    String username_input;
-                    username_input =Display.get_username_input(screen);
-                    if(username_input != null && username.length() < 20){
-                        username += username_input;
-                    }
-                    if(username_input == null){
-                        if (username_input.equals("")){
-                            username = "user";
-                        }
-                        menu = 2;
+                    String username_input = "";
+                    switch (key.getKeyType()) {
+                        case Enter:
+                            if (username.equals("")){
+                                username = "user";
+                            }
+                            menu = 2;
+                            break;
+                        case Character:
+                            try {
+                                username_input = key.getCharacter().toString();
+                                if(username.length() < 20){
+                                    username += username_input;
+                                }
+                                break;
+                            } catch (Exception e) {
+                                break;
+                            }
+                        default:
+                            break;  
                     }
                     break;
                 case 2:
@@ -143,7 +153,9 @@ public class Menu {
                             }
                             break;
                         case Enter:
+                            Game.boat_quantity =(int) Game.size_board / 2;
                             menu = 3;
+                            break;
                         default:
                             break;
                         }
@@ -206,10 +218,10 @@ public class Menu {
         while (true) {
             screen.clear();
             Display.draw_box(txt, Display.center_x(columns, box_width), 0, box_width, box_height, box_style);  
-            txt.putString(Display.center_x(columns, plays.length()) -4 , 2, user);
-            txt.putString(Display.center_x(columns, plays.length()) -4  , 3, plays);
-            txt.putString(Display.center_x(columns, plays.length()) -4 , 4, acerted);
-            txt.putString(Display.center_x(columns, plays.length()) -4, 5, missed);
+            txt.putString(Display.center_x(columns, user.length())  , 2, user);
+            txt.putString(Display.center_x(columns, user.length())   , 3, plays);
+            txt.putString(Display.center_x(columns, user.length())  , 4, acerted);
+            txt.putString(Display.center_x(columns, user.length()) , 5, missed);
             if(win){
                 txt.putString(Display.center_x(columns, Texts.title_win.length()), Texts.boat.length + 2, Texts.title_win);
             }

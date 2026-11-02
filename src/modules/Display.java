@@ -65,24 +65,6 @@ public class Display {
         txt.setForegroundColor(TextColor.ANSI.DEFAULT);
     }
 
-    static String get_username_input(Screen screen)throws IOException{
-        KeyStroke key = screen.readInput();
-        switch (key.getKeyType()) {
-                case Enter:
-                    return null;
-                case Character:
-                    try {
-                        String input = key.getCharacter().toString();
-                        return input;
-                    } catch (Exception e) {
-                        return "";
-                    }
-                default:
-                    return "";
-
-                    
-            }
-    }
 
     //SE NECESITA UNA FUENTE DE TERMINAL ESPECIFICA
     static void draw_board(TextGraphics txt,int x, int y,int size,int[][] board){

@@ -11,10 +11,11 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 public class Game {
     static int size_board = 12;
+    static int boat_quantity = 0;
     static int dificult = 0;
     static int velocity = 1;
     static int sleep_time = 750;
-    static int plays = 1;
+    static int plays = 0;
     static int acerted = 0;
     static int missed = 0;
 
@@ -31,8 +32,7 @@ public class Game {
         Random random = new Random();
 
         boolean game = true;
-        int boat_quantity = 5;
-        int[] boat_sizes = new int[5];
+        int[] boat_sizes = new int[boat_quantity];
 
         Boat bot_boat = new Boat();
         for (int i = 0; i < boat_quantity; i++) {
@@ -51,7 +51,6 @@ public class Game {
         int turn = 0;
         int x = 0;
         int y = 0;
-        reset_game(screen, player, bot);
         if(size_board % 2 == 0){
             x= size_board /2;
             y = size_board /2;
@@ -230,23 +229,10 @@ public class Game {
         return false;
     }
 
-    public static boolean guess_boat(Player p1, Player p2, int x, int y){
-        int[][] board = p2.get_board();
-        boolean a;
-        if(board[x][y] == 1){
-            a = p1.set_board(x,y);
-        }
-        else{
-            a = p1.set_board(x,y);
-        }
-        return a;
-
-    }
-
     public static void reset_game(Screen screen,Player player, Player bot) throws IOException{
         bot.reset_board(size_board);
         player.reset_board(size_board);
-        //game_loop(screen);
+        game_loop(screen);
     }
 
 }
