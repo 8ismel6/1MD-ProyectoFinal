@@ -13,9 +13,9 @@ public class Texts {
         "   \\----------------/"
     };
     public static String[] final_options = {
-        "[  Jugar  ]",
+        "[  Volver ]",
         "[ Guardar ]",
-        "[  Salir  ]"
+        "[  Salir  ]",
     };
     public static String[] options = {
         "[  Jugar  ]",

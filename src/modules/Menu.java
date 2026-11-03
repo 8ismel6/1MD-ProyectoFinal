@@ -16,7 +16,7 @@ public class Menu {
     static char[] box_style = {'┌', '┐', '└', '┘', '─', '│'};
     static int box_width = 60;
     static int box_height = 20;
-    static String username = "";
+    public static String username = "";
     
 
 

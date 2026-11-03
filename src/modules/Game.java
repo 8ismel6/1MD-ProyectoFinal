@@ -1,5 +1,7 @@
 package src.modules;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.Random;
 import com.googlecode.lanterna.SGR;
@@ -30,6 +32,7 @@ public class Game {
         Player bot = new Player(size_board);
         Boat boat = new Boat();
         Random random = new Random();
+        String username = Menu.username;
 
         boolean game = true;
         int[] boat_sizes = new int[boat_quantity];
@@ -44,10 +47,10 @@ public class Game {
             boat.generate_boat(boat_sizes[i]);
             put_boat(columns,screen, txt,mid_x,boat.min_x,boat.max_x,boat.min_y,boat.max_y,player.get_board(),player);
         }
-        game(screen, txt, mid_x, columns, bot, player,player.get_board());
+        game(screen, txt, mid_x, columns, bot, player,player.get_board(),username);
     }
 
-    public static void game(Screen screen,TextGraphics txt,int mid_x,int columns,Player bot,Player player,int[][] pboard) throws IOException{
+    public static void game(Screen screen,TextGraphics txt,int mid_x,int columns,Player bot,Player player,int[][] pboard,String username) throws IOException{
         int turn = 0;
         int x = 0;
         int y = 0;
@@ -159,7 +162,12 @@ public class Game {
                 a = Menu.menu_end(txt, screen, false, columns);
             }
             if( a == 0){
-                reset_game(screen,player, bot);
+                Menu.show(screen);
+            }
+            else{
+                if (a == 1) {
+                    save_game(player.get_board(), bot.get_board(), username, missed, acerted, size_board);
+                }
             }
         
     }   }
@@ -233,6 +241,44 @@ public class Game {
         bot.reset_board(size_board);
         player.reset_board(size_board);
         game_loop(screen);
+    }
+
+    public static void write(Path path,String content){
+        try {
+            Files.writeString(path, content);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static String board_to_string(int[][] board, int size) {
+        String Sboard = "";
+        int maxLen = 0;
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                int len = String.valueOf(board[i][j]).length();
+                if (len > maxLen) {
+                    maxLen = len;
+                }
+            }
+        }
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                Sboard += String.format("%" + maxLen + "d ", board[i][j]);
+            }
+            Sboard += "\n";
+        }
+
+        return Sboard;
+    }
+    
+    public static void save_game(int[][] bot_board,int[][] player_board,String user,int misses,int acerts,int size_board) throws IOException{
+       Path path = Paths.get(user + ".txt");
+       String content = "Nombre de usuario: " + user + "\n" + "Tiros acertados: " + acerts + "\n" + "Tiros errados: " + misses + "\n" + "---- " + user + " tablero ----" + "\n" + board_to_string(player_board,size_board) + "\n"+ "---- tablero enemigo ----" + "\n" + board_to_string(player_board,size_board);
+       write(path, content);
+       
     }
 
 }
