@@ -289,17 +289,16 @@ public class Game {
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                Sboard += String.format("%s ", conversor(board[i][j]));
+                Sboard += String.format("%s ", conversor(board[j][i]));
             }
             Sboard += "\n";
         }
-
         return Sboard;
     }
     
     public static void save_game(int[][] bot_board,int[][] player_board,String user,int misses,int acerts,int size_board) throws IOException{
        Path path = Paths.get(user + ".txt");
-       String content = "Nombre de usuario: " + user + "\n" + "Tiros acertados: " + acerts + "\n" + "Tiros errados: " + misses + "\n" + "'■'=agua '0=errado '1'=barco 'x'=acertado" + "---- " + user + " tablero ----" + "\n" + board_to_string(player_board,size_board) + "\n"+ "---- tablero enemigo ----" + "\n" + board_to_string(bot_board,size_board);
+       String content = "Nombre de usuario: " + user + "\n" + "Tiros acertados: " + acerts + "\n" + "Tiros errados: " + misses + "\n" + "'■'=agua '0=errado '1'=barco 'x'=acertado" + "\n" + "---- " + user + " tablero ----" + "\n" + board_to_string(player_board,size_board) + "\n"+ "---- tablero enemigo ----" + "\n" + board_to_string(bot_board,size_board);
        write(path, content);
        
     }
