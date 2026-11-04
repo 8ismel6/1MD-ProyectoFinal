@@ -1,12 +1,9 @@
 package src.modules;
 //Styles and utilities
 
-import java.io.IOException;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.screen.Screen;
 
 public class Display {
     static void sleep(int sleep){
@@ -131,10 +128,6 @@ public class Display {
                 
             }
         }
-    }
-
-    static void bot_animation(){
-        
     }
 
     static void draw_pointer(int mid, int top, TextGraphics txt, int x, int y) {

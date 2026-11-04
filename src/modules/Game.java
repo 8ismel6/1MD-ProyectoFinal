@@ -162,7 +162,7 @@ public class Game {
                 a = Menu.menu_end(txt, screen, false, columns);
             }
             if( a == 0){
-                Menu.show(screen);
+                reset_game(screen, player, bot);
             }
             else{
                 if (a == 1) {
@@ -240,7 +240,14 @@ public class Game {
     public static void reset_game(Screen screen,Player player, Player bot) throws IOException{
         bot.reset_board(size_board);
         player.reset_board(size_board);
-        game_loop(screen);
+        Menu.username = "";
+        Game.size_board = 12;
+        Game.velocity = 1;
+        Game.dificult = 0;
+        Game.plays = 0;
+        Game.acerted = 0;
+        Game.missed = 0;
+        src.Main.main(null);
     }
 
     public static void write(Path path,String content){
@@ -249,6 +256,22 @@ public class Game {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static String conversor(int value){
+        switch (value) {
+            case 0:
+                return "■";
+            case 1:
+                return "1";
+            case 2:
+                return "x";
+            case 3:
+                return "0";
+            default:
+                break;
+        }
+        return "";
     }
 
     public static String board_to_string(int[][] board, int size) {
@@ -266,7 +289,7 @@ public class Game {
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                Sboard += String.format("%" + maxLen + "d ", board[i][j]);
+                Sboard += String.format("%s ", conversor(board[i][j]));
             }
             Sboard += "\n";
         }
@@ -276,7 +299,7 @@ public class Game {
     
     public static void save_game(int[][] bot_board,int[][] player_board,String user,int misses,int acerts,int size_board) throws IOException{
        Path path = Paths.get(user + ".txt");
-       String content = "Nombre de usuario: " + user + "\n" + "Tiros acertados: " + acerts + "\n" + "Tiros errados: " + misses + "\n" + "---- " + user + " tablero ----" + "\n" + board_to_string(player_board,size_board) + "\n"+ "---- tablero enemigo ----" + "\n" + board_to_string(player_board,size_board);
+       String content = "Nombre de usuario: " + user + "\n" + "Tiros acertados: " + acerts + "\n" + "Tiros errados: " + misses + "\n" + "'■'=agua '0=errado '1'=barco 'x'=acertado" + "---- " + user + " tablero ----" + "\n" + board_to_string(player_board,size_board) + "\n"+ "---- tablero enemigo ----" + "\n" + board_to_string(bot_board,size_board);
        write(path, content);
        
     }
