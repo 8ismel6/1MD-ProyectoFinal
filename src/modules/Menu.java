@@ -255,4 +255,21 @@ public class Menu {
             }
         }
     }
+
+    public static void menu_saved(TextGraphics txt, Screen screen, boolean saved, int columns)throws IOException{
+        screen.clear();
+        Display.draw_box(txt, Display.center_x(columns, box_width), 0, box_width, box_height, box_style); 
+        int boat_x = Display.center_x(columns, Display.max_line_width(Texts.boat));
+        for (int i = 0; i < Texts.boat.length; i++) {
+            txt.putString(boat_x, 2 + i, Texts.boat[i]);
+        } 
+        if(saved){
+            txt.putString(Display.center_x(columns, Texts.title_saved_sucsesfull.length()),Texts.boat.length + 4, Texts.title_saved_sucsesfull);
+        }
+        else{
+            txt.putString(Display.center_x(columns, Texts.title_saved_unsucsesfull.length()),Texts.boat.length + 4, Texts.title_saved_unsucsesfull);
+        }
+        screen.refresh();
+        Display.sleep(1000);
+    }
 }

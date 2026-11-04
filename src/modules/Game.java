@@ -166,7 +166,9 @@ public class Game {
             }
             else{
                 if (a == 1) {
-                    save_game(player.get_board(), bot.get_board(), username, missed, acerted, size_board);
+                    boolean saved = save_game(player.get_board(), bot.get_board(), username,plays, missed, acerted, size_board);
+                    Menu.menu_saved(txt, screen, saved, columns);
+                    reset_game(screen, player, bot);
                 }
             }
         
@@ -250,11 +252,13 @@ public class Game {
         src.Main.main(null);
     }
 
-    public static void write(Path path,String content){
+    public static boolean write(Path path,String content){
         try {
             Files.writeString(path, content);
+            return true;
         } catch (IOException e) {
             System.out.println(e.getMessage());
+            return false;
         }
     }
 
@@ -276,16 +280,6 @@ public class Game {
 
     public static String board_to_string(int[][] board, int size) {
         String Sboard = "";
-        int maxLen = 0;
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                int len = String.valueOf(board[i][j]).length();
-                if (len > maxLen) {
-                    maxLen = len;
-                }
-            }
-        }
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -296,10 +290,16 @@ public class Game {
         return Sboard;
     }
     
-    public static void save_game(int[][] bot_board,int[][] player_board,String user,int misses,int acerts,int size_board) throws IOException{
+    public static boolean save_game(int[][] bot_board,int[][] player_board,String user,int plays,int misses,int acerts,int size_board) throws IOException{
        Path path = Paths.get(user + ".txt");
-       String content = "Nombre de usuario: " + user + "\n" + "Tiros acertados: " + acerts + "\n" + "Tiros errados: " + misses + "\n" + "'■'=agua '0=errado '1'=barco 'x'=acertado" + "\n" + "---- " + user + " tablero ----" + "\n" + board_to_string(player_board,size_board) + "\n"+ "---- tablero enemigo ----" + "\n" + board_to_string(bot_board,size_board);
-       write(path, content);
+       String content = "Nombre de usuario: " + user + "\n" +"Tiros realizados" + plays + "\n" + "Tiros acertados: " + acerts + "\n" + "Tiros errados: " + misses + "\n" + "'■'=agua '0=errado '1'=barco 'x'=acertado" + "\n" + "---- " + user + " tablero ----" + "\n" + board_to_string(player_board,size_board) + "\n"+ "---- tablero enemigo ----" + "\n" + board_to_string(bot_board,size_board);
+       boolean saved = write(path, content);
+       if(saved){
+        return true;
+       }
+       else{
+        return false;
+       }
        
     }
 

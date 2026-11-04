@@ -36,6 +36,8 @@ public class Texts {
     public static String title_down_put_boat = "--- Flechas para mover Enter para ponerlo ---";
     public static String title_win = "--- ¡Ganaste! ---";
     public static String title_lose = "--- ¡Perdiste! ---";
+    public static String title_saved_sucsesfull = "-- Guardado correctamente ---";
+    public static String title_saved_unsucsesfull = "-- No se guardo correctamente ---"; 
     public static String subtitle_velocity = "(x1 recomendado)";
     public static String blank_space = "                      ";
     public static String blank_space_board = "    ";
