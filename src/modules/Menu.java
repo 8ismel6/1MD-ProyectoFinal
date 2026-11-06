@@ -57,9 +57,11 @@ public class Menu {
                     for(int i = 0; i<= 3; i++){                            
                         if(dificult == i){
                             txt.setBackgroundColor(TextColor.ANSI.WHITE);
+                            txt.setForegroundColor(TextColor.ANSI.BLACK);
                         }
                         txt.putString(Display.center_x(columns, Texts.dificulty[i].length()),12+i, Texts.dificulty[i]);
                         txt.setBackgroundColor(TextColor.ANSI.DEFAULT);
+                        txt.setForegroundColor(TextColor.ANSI.DEFAULT);
                     }
                 break;
             case 4:

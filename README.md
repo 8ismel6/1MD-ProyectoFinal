@@ -259,95 +259,91 @@ Si la celda es 1 la cambia a 2 (impacto); en otro caso la cambia a 3 (fallo).
 
 ## Diagramas de flujo por función
 
-
-
 ### Flujo de todo el proyecto
 
 ```mermaid
 flowchart TD
-A["Main.main"] --> B["new DefaultTerminalFactory().createScreen() y screen.startScreen()"]
-B --> C["Menu.show(screen)"]
-C --> C1["draw_menu → draw_ascii → draw_options (Menu)<br/>usa Display.draw_box, Display.draw_options, Display.center_x"]
-C1 --> C2["Lee tecla y avanza: nombre → tamaño → dificultad → velocidad"]
-C2 --> D{"choice == 0 ?"}
-D -- "No (Salir)" --> Z(["Fin"])
-D -- "Sí" --> E["Game.game_loop(screen)"]
-E --> E1["Boat.generate_boat + Player.set_boat_random_place<br/>(barcos del bot)"]
-E1 --> E2["Game.put_boat por cada barco<br/>(Display.draw_board, draw_boats_and_pointer, Player.set_boat)"]
-E2 --> F["Game.game(...)"]
-F --> G{"turn == 0 ?"}
-G -- "Sí: jugador" --> H["Display.draw_board y draw_pointer<br/>flechas mueven, Enter dispara"]
-H --> H1{"celda enemiga"}
-H1 -- "1: acierto" --> H2["pasa a 2, acerted++, sigue turno 0"]
-H1 -- "0: fallo" --> H3["pasa a 3, missed++, turn = 1"]
-G -- "No: bot" --> I["Display.draw_board y draw_boats<br/>Bot.Play → count_cells → shoot"]
-I --> I1{"acertó ?"}
-I1 -- "No" --> I2["turn = 0"]
-I1 -- "Sí" --> I3["sigue turno 1"]
-H2 --> J{"Game.has_boats(bot)? y (jugador)?"}
+A["Main.main"] --> B["Crea e inicia la pantalla de la terminal"]
+B --> C["Menu.show muestra los menús de configuración"]
+C --> C1["Menu.draw_menu, Menu.draw_ascii y Menu.draw_options dibujan cada pantalla usando Display.draw_box, Display.draw_options y Display.center_x"]
+C1 --> C2["Lee la tecla y avanza por nombre, tamaño, dificultad y velocidad"]
+C2 --> D{"¿El jugador eligió jugar?"}
+D -- "No" --> Z(["Fin del programa"])
+D -- "Sí" --> E["Game.game_loop prepara la partida"]
+E --> E1["Boat.generate_boat y Player.set_boat_random_place ubican los barcos del bot"]
+E1 --> E2["Game.put_boat pide al jugador ubicar cada barco usando Display.draw_board, Display.draw_boats_and_pointer y Player.set_boat"]
+E2 --> F["Game.game inicia los turnos"]
+F --> G{"¿Es el turno del jugador?"}
+G -- "Sí" --> H["Display.draw_board y Display.draw_pointer dibujan el tablero enemigo, las flechas mueven el puntero y Enter dispara"]
+H --> H1{"¿Qué hay en la celda disparada?"}
+H1 -- "Barco" --> H2["Marca acierto, suma un acierto y el jugador sigue disparando"]
+H1 -- "Agua" --> H3["Marca fallo, suma un fallo y pasa el turno al bot"]
+G -- "No" --> I["Display.draw_board y Display.draw_boats dibujan el tablero propio y Bot.Play usa Bot.count_cells y Bot.shoot para disparar"]
+I --> I1{"¿El bot acertó?"}
+I1 -- "No" --> I2["Pasa el turno al jugador"]
+I1 -- "Sí" --> I3["El bot sigue disparando"]
+H2 --> J{"Game.has_boats: ¿ambos tableros aún tienen barcos?"}
 H3 --> J
 I2 --> J
 I3 --> J
-J -- "Todos tienen barcos" --> G
-J -- "Alguien sin barcos" --> K["Menu.menu_end(win)"]
-K --> L{"opción a"}
-L -- "0 Volver" --> M["Game.reset_game → Main.main"]
+J -- "Sí" --> G
+J -- "No" --> K["Menu.menu_end muestra el resultado y las estadísticas"]
+K --> L{"¿Qué opción eligió?"}
+L -- "Volver" --> M["Game.reset_game reinicia todo y llama a Main.main"]
 M --> A
-L -- "1 Guardar" --> N["Game.save_game → board_to_string → write"]
-L -- "2 Salir" --> Z
+L -- "Guardar" --> N["Game.save_game usa Game.board_to_string y Game.write para crear el archivo"]
+L -- "Salir" --> Z
 N --> Z
 ```
 
-
 ### Main.java
-
 
 #### `main(String[] args)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["screen = createScreen()"]
-B --> C["screen.startScreen()"]
-C --> D["choice = Menu.show(screen)"]
-D --> E{"choice == 0 ?"}
-E -- "Sí" --> F["Game.game_loop(screen)"]
+A(["Inicio"]) --> B["Crea la pantalla de la terminal"]
+B --> C["Inicia la pantalla"]
+C --> D["Muestra el menú y guarda la opción elegida"]
+D --> E{"¿Eligió jugar?"}
+E -- "Sí" --> F["Comienza la partida"]
 E -- "No" --> G(["Fin"])
 F --> G
-B -. "IOException" .-> H["e.printStackTrace()"] --> G
+C -- "Si ocurre un error de entrada o salida" --> H["Imprime el error"]
+H --> G
 ```
 
-
 ### Menu.java
-
 
 #### `show(Screen screen)`
 
 ```mermaid
 flowchart TD
-A(["Inicio: selected=0, menu=0"]) --> B["screen.clear()"]
-B --> C["draw_menu(...)"]
-C --> D["screen.refresh() y key = readInput()"]
-D --> E{"menu"}
-E -- "0 Principal" --> F{"tecla"}
-F -- "Arriba" --> F1["selected = 0"]
-F -- "Abajo" --> F2["selected = 1"]
-F -- "Enter" --> F3{"selected == 1 ?"}
-F3 -- "Sí" --> R1(["return 1"])
-F3 -- "No" --> F4["menu = 1"]
-E -- "1 Nombre" --> G{"tecla"}
-G -- "Carácter" --> G1["si username.length < 20: agrega carácter"]
-G -- "Enter" --> G2["si vacío username = user; menu = 2"]
-E -- "2 Tamaño" --> H{"tecla"}
-H -- "Arriba" --> H1["size_board++ si <= 24"]
-H -- "Abajo" --> H2["size_board-- si >= 13"]
-H -- "Enter" --> H3["boat_quantity = size_board/2; menu = 3"]
-E -- "3 Dificultad" --> I{"tecla"}
-I -- "Arriba/Abajo" --> I1["dificult cambia en ciclo 0..3"]
-I -- "Enter" --> I2["menu = 4"]
-E -- "4 Velocidad" --> J{"tecla"}
-J -- "Arriba" --> J1["velocity++ si <= 3"]
-J -- "Abajo" --> J2["velocity-- si >= 2"]
-J -- "Enter" --> J3["sleep_time = 750/velocity"] --> R2(["return selected (0)"])
+A(["Inicio"]) --> B["Limpia la pantalla"]
+B --> C["Dibuja la pantalla actual"]
+C --> D["Actualiza la pantalla y lee una tecla"]
+D --> E{"¿En qué pantalla está?"}
+E -- "Principal" --> F{"¿Qué tecla se presionó?"}
+F -- "Arriba" --> F1["Resalta la opción Jugar"]
+F -- "Abajo" --> F2["Resalta la opción Salir"]
+F -- "Enter" --> F3{"¿Está resaltada la opción Salir?"}
+F3 -- "Sí" --> R1(["Devuelve la opción salir"])
+F3 -- "No" --> F4["Pasa a la pantalla de nombre"]
+E -- "Nombre" --> G{"¿Qué tecla se presionó?"}
+G -- "Una letra" --> G1["Agrega la letra si el nombre aún no llegó al límite de 20 caracteres"]
+G -- "Enter" --> G2["Si el nombre quedó vacío le pone un nombre por defecto y pasa a la pantalla de tamaño"]
+E -- "Tamaño" --> H{"¿Qué tecla se presionó?"}
+H -- "Arriba" --> H1["Aumenta el tamaño si no llegó al máximo"]
+H -- "Abajo" --> H2["Reduce el tamaño si no llegó al mínimo"]
+H -- "Enter" --> H3["Calcula la cantidad de barcos como la mitad del tamaño y pasa a la pantalla de dificultad"]
+E -- "Dificultad" --> I{"¿Qué tecla se presionó?"}
+I -- "Arriba o Abajo" --> I1["Cambia la dificultad dando la vuelta entre las cuatro"]
+I -- "Enter" --> I2["Pasa a la pantalla de velocidad"]
+E -- "Velocidad" --> J{"¿Qué tecla se presionó?"}
+J -- "Arriba" --> J1["Aumenta la velocidad si no llegó al máximo"]
+J -- "Abajo" --> J2["Reduce la velocidad si no llegó al mínimo"]
+J -- "Enter" --> J3["Calcula la pausa entre mensajes según la velocidad"]
+J3 --> R2(["Devuelve la opción jugar"])
 F1 --> B
 F2 --> B
 F4 --> B
@@ -362,66 +358,66 @@ J1 --> B
 J2 --> B
 ```
 
-
 #### `menu_end(txt, screen, win, columns)`
 
 ```mermaid
 flowchart TD
-A(["Inicio: selected=0"]) --> B["Arma textos user, plays, acerted, missed"]
-B --> C["screen.clear() y Display.draw_box"]
-C --> D["Dibuja estadísticas"]
-D --> E{"win ?"}
-E -- "Sí" --> E1["title_win"]
-E -- "No" --> E2["title_lose"]
-E1 --> F["Display.draw_options(final_options, selected)"]
-E2 --> F
-F --> G["screen.refresh() y readInput()"]
-G --> H{"tecla"}
-H -- "Arriba" --> H1["selected-- (0 pasa a 2)"] --> C
-H -- "Abajo" --> H2["selected++ (2 pasa a 0)"] --> C
-H -- "Enter" --> R(["return selected"])
-H -- "otra" --> C
+A(["Inicio"]) --> B["Resalta la primera opción"]
+B --> C["Arma los textos con el nombre y las estadísticas"]
+C --> D["Limpia la pantalla y dibuja el marco"]
+D --> E["Dibuja las estadísticas"]
+E --> F{"¿Ganó el jugador?"}
+F -- "Sí" --> F1["Muestra el título de victoria"]
+F -- "No" --> F2["Muestra el título de derrota"]
+F1 --> G["Dibuja los botones Volver, Guardar y Salir"]
+F2 --> G
+G --> H["Actualiza la pantalla y lee una tecla"]
+H --> I{"¿Qué tecla se presionó?"}
+I -- "Arriba" --> I1["Resalta la opción anterior, y desde la primera salta a la última"]
+I -- "Abajo" --> I2["Resalta la opción siguiente, y desde la última salta a la primera"]
+I -- "Enter" --> R(["Devuelve la opción resaltada"])
+I -- "Otra" --> D
+I1 --> D
+I2 --> D
 ```
-
 
 #### `draw_menu(txt, columns, selected, menu, dificult)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["draw_ascii(txt, columns, menu, dificult)"]
-B --> C["x = center_x, y = boat.length + 4"]
-C --> D{"menu == 0 ?"}
-D -- "Sí" --> E["Display.draw_options(options, selected, x, y, 2)"]
+A(["Inicio"]) --> B["Dibuja el marco, el barco y el contenido de la pantalla actual"]
+B --> C["Calcula la posición de los botones debajo del barco"]
+C --> D{"¿Es el menú principal?"}
+D -- "Sí" --> E["Dibuja los botones Jugar y Salir"]
 D -- "No" --> F(["Fin"])
 E --> F
 ```
-
 
 #### `draw_ascii(txt, columns, menu, dificult)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["Activa negrita"]
-B --> C["Display.draw_box(marco 60x20)"]
-C --> D["boat_x = center_x(max_line_width(boat))"]
-D --> E{"i < boat.length ?"}
-E -- "Sí" --> F["putString(boat[i]); i++"] --> E
-E -- "No" --> G["draw_options(txt, menu, columns, dificult)"]
+A(["Inicio"]) --> B["Activa el texto en negrita"]
+B --> C["Dibuja el marco del menú"]
+C --> D["Calcula la columna para centrar el barco"]
+D --> E{"¿Quedan líneas del barco por dibujar?"}
+E -- "Sí" --> F["Dibuja la siguiente línea del barco"]
+F --> E
+E -- "No" --> G["Dibuja el contenido de la pantalla actual"]
 G --> H(["Fin"])
 ```
 
-
-#### `draw_options(txt, menu, columns, dificult) (Menu)`
+#### `draw_options(txt, menu, columns, dificult)` (Menu)
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B{"menu"}
-B -- "0" --> C["Dibuja Texts.title"]
-B -- "1" --> D["Título, aviso y campo con username (fondo negro)"]
-B -- "2" --> E["Título, campo con size_board y aviso"]
-B -- "3" --> F["Título y 4 dificultades; la elegida con fondo blanco"]
-B -- "4" --> G["Título, campo con x + velocity y subtítulo"]
-B -- "otro" --> H["No hace nada"]
+A(["Inicio"]) --> B{"¿Qué pantalla es?"}
+B -- "Principal" --> C["Dibuja el título del juego"]
+B -- "Nombre" --> D["Dibuja el título, el aviso y el campo con el nombre sobre fondo negro"]
+B -- "Tamaño" --> E["Dibuja el título, el campo con el tamaño del tablero y el aviso"]
+B -- "Dificultad" --> F["Dibuja el título y las cuatro dificultades, la elegida con fondo blanco"]
+B -- "Velocidad" --> G["Dibuja el título, el campo con la velocidad y el subtítulo"]
+B -- "Otra" --> H["No hace nada"]
 C --> Z(["Fin"])
 D --> Z
 E --> Z
@@ -430,81 +426,79 @@ G --> Z
 H --> Z
 ```
 
-
 ### Game.java
-
 
 #### `game_loop(Screen screen)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["Crea txt, size, columns, mid_x, player, bot, boat, bot_boat, random, boat_sizes"]
-B --> C{"i < boat_quantity ? (bot)"}
-C -- "Sí" --> D["bot_boat.generate_boat(random 3 a 5)"]
-D --> D1["boat_sizes[i] = bot_boat.size"]
-D1 --> D2["bot.set_boat_random_place(...)"] --> C
-C -- "No" --> E{"i < boat_quantity ? (jugador)"}
-E -- "Sí" --> F["boat.generate_boat(boat_sizes[i])"]
-F --> G["put_boat(...)"] --> E
-E -- "No" --> H["game(screen, txt, mid_x, columns, bot, player, ...)"]
+A(["Inicio"]) --> B["Crea los jugadores, los barcos y la lista de tamaños de barcos"]
+B --> C{"¿Faltan barcos del bot por ubicar?"}
+C -- "Sí" --> D["Genera un barco con tamaño aleatorio de 3 a 5"]
+D --> D1["Guarda su tamaño en la lista"]
+D1 --> D2["Lo ubica en un lugar libre al azar del tablero del bot"]
+D2 --> C
+C -- "No" --> E{"¿Faltan barcos del jugador por ubicar?"}
+E -- "Sí" --> F["Genera un barco con el siguiente tamaño de la lista"]
+F --> G["Deja que el jugador lo ubique"]
+G --> E
+E -- "No" --> H["Inicia los turnos de la partida"]
 H --> I(["Fin"])
 ```
-
 
 #### `game(...)`
 
 ```mermaid
 flowchart TD
-A(["Inicio: turn=0, x,y al centro, playing=true"]) --> B{"playing ?"}
+A(["Inicio: turno del jugador y puntero al centro"]) --> B{"¿La partida sigue en juego?"}
 B -- "No" --> Z(["Fin"])
-B -- "Sí" --> C{"turn == 0 ?"}
-C -- "Sí" --> D["clear, draw_board(bot), draw_pointer, textos"]
-D --> E["key = readInput()"]
-E --> F{"tecla"}
-F -- "Flechas" --> F1["mueve x o y dentro de 0..size_board-1"]
-F -- "Enter" --> G{"bot.pboard[x][y]"}
-G -- "1" --> G1["a 2; acerted++; plays++; mensaje; sleep"]
-G -- "0" --> G2["a 3; turn=1; missed++; plays++; mensaje; sleep"]
-G -- "2 o 3" --> G3["Ignora"]
-C -- "No" --> H["draw_board y draw_boats del jugador; sleep"]
-H --> I{"Bot.Play(...)"}
-I -- "false" --> I1["turn = 0; mensaje bot_missed"]
-I -- "true" --> I2["mensaje bot_acerted"]
-I1 --> J["Redibuja y sleep"]
+B -- "Sí" --> C{"¿Es el turno del jugador?"}
+C -- "Sí" --> D["Limpia la pantalla y dibuja el tablero enemigo, el puntero y los textos"]
+D --> E["Lee una tecla"]
+E --> F{"¿Qué tecla se presionó?"}
+F -- "Una flecha" --> F1["Mueve el puntero sin salirse del tablero"]
+F -- "Enter" --> G{"¿Qué hay en la celda del puntero?"}
+G -- "Barco" --> G1["Marca el impacto, suma un acierto y un disparo, muestra el mensaje y hace una pausa"]
+G -- "Agua" --> G2["Marca el fallo, pasa el turno al bot, suma un fallo y un disparo, muestra el mensaje y hace una pausa"]
+G -- "Ya disparada" --> G3["Ignora la tecla"]
+C -- "No" --> H["Dibuja el tablero propio con los barcos y hace una pausa"]
+H --> I{"¿El bot acertó?"}
+I -- "No" --> I1["Pasa el turno al jugador y muestra el mensaje de fallo del bot"]
+I -- "Sí" --> I2["Muestra el mensaje de acierto del bot"]
+I1 --> J["Redibuja el tablero y hace una pausa"]
 I2 --> J
-F1 --> K
+F1 --> K["Deja la opción final sin acción"]
 G1 --> K
 G2 --> K
 G3 --> K
-J --> K["a = 3"]
-K --> L{"has_boats(bot) ?"}
-L -- "No" --> L1["playing=false; a = menu_end(true)"]
-L -- "Sí" --> M{"has_boats(jugador) ?"}
-M -- "No" --> M1["playing=false; a = menu_end(false)"]
-M -- "Sí" --> N
-L1 --> N{"a"}
+J --> K
+K --> L{"¿Al bot le quedan barcos?"}
+L -- "No" --> L1["Termina la partida y muestra el menú final con victoria"]
+L -- "Sí" --> M{"¿Al jugador le quedan barcos?"}
+M -- "No" --> M1["Termina la partida y muestra el menú final con derrota"]
+M -- "Sí" --> B
+L1 --> N{"¿Qué opción final eligió?"}
 M1 --> N
-N -- "0" --> N1["reset_game(...)"]
-N -- "1" --> N2["save_game(...)"]
-N -- "otro" --> B
+N -- "Volver" --> N1["Reinicia el juego"]
+N -- "Guardar" --> N2["Guarda la partida en un archivo"]
+N -- "Salir" --> B
 N1 --> B
 N2 --> B
 ```
-
 
 #### `put_boat(...)`
 
 ```mermaid
 flowchart TD
-A(["Inicio: min/max = coordenadas del barco, boat_on=false"]) --> B["clear, títulos, draw_board, draw_boats_and_pointer"]
-B --> C["key = readInput()"]
-C --> D{"tecla"}
-D -- "Arriba" --> D1["min_y--, max_y-- si min_y-1 >= 0"]
-D -- "Abajo" --> D2["min_y++, max_y++ si max_y+1 < size_board"]
-D -- "Izquierda" --> D3["min_x--, max_x-- si min_x-1 >= 0"]
-D -- "Derecha" --> D4["min_x++, max_x++ si max_x+1 < size_board"]
-D -- "Enter" --> D5["boat_on = player.set_boat(...)"]
-D1 --> E{"boat_on ?"}
+A(["Inicio: el barco aún no está colocado"]) --> B["Limpia la pantalla y dibuja títulos, tablero, barcos puestos y el barco actual"]
+B --> C["Lee una tecla"]
+C --> D{"¿Qué tecla se presionó?"}
+D -- "Arriba" --> D1["Sube el barco una fila si no se sale del tablero"]
+D -- "Abajo" --> D2["Baja el barco una fila si no se sale del tablero"]
+D -- "Izquierda" --> D3["Mueve el barco una columna a la izquierda si no se sale del tablero"]
+D -- "Derecha" --> D4["Mueve el barco una columna a la derecha si no se sale del tablero"]
+D -- "Enter" --> D5["Intenta fijar el barco, lo cual solo funciona si no se superpone con otro"]
+D1 --> E{"¿El barco quedó colocado?"}
 D2 --> E
 D3 --> E
 D4 --> E
@@ -513,323 +507,296 @@ E -- "No" --> B
 E -- "Sí" --> F(["Fin"])
 ```
 
-
 #### `has_boats(int[][] board)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["Recorre i, j"]
-B --> C{"board[i][j] == 1 ?"}
-C -- "Sí" --> D(["return true"])
-C -- "No" --> E{"quedan celdas ?"}
+A(["Inicio"]) --> B["Recorre las celdas del tablero"]
+B --> C{"¿La celda tiene un barco intacto?"}
+C -- "Sí" --> D(["Devuelve verdadero"])
+C -- "No" --> E{"¿Quedan celdas por revisar?"}
 E -- "Sí" --> B
-E -- "No" --> F(["return false"])
+E -- "No" --> F(["Devuelve falso"])
 ```
-
 
 #### `reset_game(screen, player, bot)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["bot.reset_board y player.reset_board"]
-B --> C["username vacío; dificult=0; velocity=1; size_board=12"]
-C --> D["sleep_time=750; plays=0; acerted=0; missed=0"]
-D --> E["Main.main(new String[0])"]
+A(["Inicio"]) --> B["Vacía el tablero del bot y el del jugador"]
+B --> C["Borra el nombre y vuelve la dificultad, la velocidad y el tamaño a sus valores iniciales"]
+C --> D["Vuelve la pausa a su valor inicial y pone en cero los disparos, aciertos y fallos"]
+D --> E["Llama de nuevo a Main.main para volver al menú"]
 E --> F(["Fin"])
 ```
-
 
 #### `write(Path path, String content)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["Files.writeString(path, content)"]
-B -- "OK" --> C(["Fin"])
-B -- "IOException" --> D["println(e.getMessage())"] --> C
+A(["Inicio"]) --> B["Escribe el texto en el archivo"]
+B -- "Se escribió bien" --> C(["Fin"])
+B -- "Hubo un error" --> D["Imprime el mensaje del error"]
+D --> C
 ```
-
 
 #### `board_to_string(int[][] board, int size)`
 
 ```mermaid
 flowchart TD
-A(["Inicio: Sboard vacío, maxLen=0"]) --> B["Recorre toda la matriz"]
-B --> C["len = largo de String.valueOf(celda); maxLen = máximo"]
+A(["Inicio con texto vacío"]) --> B["Recorre toda la matriz"]
+B --> C["Guarda el largo del número más largo"]
 C --> D["Recorre otra vez fila por fila"]
-D --> E["Sboard += celda formateada a maxLen + espacio"]
-E --> F["Al final de cada fila agrega salto de línea"]
-F --> G(["return Sboard"])
+D --> E["Agrega cada número alineado al ancho máximo, seguido de un espacio"]
+E --> F["Al terminar cada fila agrega un salto de línea"]
+F --> G(["Devuelve el texto"])
 ```
-
 
 #### `save_game(bot_board, player_board, user, misses, acerts, size_board)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["path = user + .txt"]
-B --> C["content = nombre + aciertos + errores"]
-C --> D["Agrega board_to_string(player_board)"]
-D --> E["Agrega título enemigo + board_to_string(player_board)"]
-E --> F["write(path, content)"]
+A(["Inicio"]) --> B["Arma el nombre del archivo con el nombre del usuario"]
+B --> C["Escribe el nombre, los aciertos y los fallos"]
+C --> D["Agrega el tablero del jugador como texto"]
+D --> E["Agrega el título del tablero enemigo y su tablero como texto"]
+E --> F["Guarda el contenido en el archivo"]
 F --> G(["Fin"])
 ```
 
-
 ### Clases auxiliares (Game.java)
-
 
 #### `Board.set_board(int x, int y)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B{"board[x][y] != 1 ?"}
-B -- "Sí" --> C["board[x][y] = 1; return true"]
-B -- "No" --> D["board[x][y] = 2; return true"]
+A(["Inicio"]) --> B{"¿La celda no tiene un barco?"}
+B -- "Sí" --> C["Coloca un barco en la celda y devuelve verdadero"]
+B -- "No" --> D["Marca la celda como impactada y devuelve verdadero"]
 ```
-
 
 #### `Boat.generate_boat(int size_boat)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["size = size_boat"]
-B --> C{"nextInt(2) == 0 ?"}
-C -- "Sí" --> D["Vertical: max_x=0, max_y=size-1"]
-C -- "No" --> E["Horizontal: max_y=0, max_x=size-1"]
+A(["Inicio"]) --> B["Guarda el tamaño del barco"]
+B --> C{"¿Sale vertical al azar?"}
+C -- "Sí" --> D["Vertical: ocupa una columna y varias filas"]
+C -- "No" --> E["Horizontal: ocupa una fila y varias columnas"]
 D --> F(["Fin"])
 E --> F
 ```
-
 
 #### `Player.reset_board(size) y constructor Player(size)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["board = new Board(size)"]
-B --> C["pboard = board.get_board()"]
+A(["Inicio"]) --> B["Crea un tablero nuevo y vacío"]
+B --> C["Guarda el acceso directo a su matriz"]
 C --> D(["Fin"])
 ```
-
 
 #### `Player.set_boat(min_x, max_x, min_y, max_y)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["boat_in = verifyi_boat_in(...)"]
-B --> C{"boat_in ?"}
-C -- "Sí (solapa)" --> D(["return false"])
-C -- "No" --> E["Pone 1 en todas las celdas del rectángulo"]
-E --> F(["return true"])
+A(["Inicio"]) --> B["Verifica si el barco se superpone con otro"]
+B --> C{"¿Se superpone?"}
+C -- "Sí" --> D(["Devuelve falso"])
+C -- "No" --> E["Marca como barco todas las celdas del rectángulo"]
+E --> F(["Devuelve verdadero"])
 ```
-
 
 #### `Player.verifyi_boat_in(min_x, max_x, min_y, max_y)`
 
 ```mermaid
 flowchart TD
-A(["Inicio: boat_in=false"]) --> B["Recorre el rectángulo"]
-B --> C{"pboard[x][y] == 1 ?"}
-C -- "Sí" --> D["boat_in = true"]
-C -- "No" --> E{"quedan celdas ?"}
+A(["Inicio: sin superposición"]) --> B["Recorre las celdas del rectángulo"]
+B --> C{"¿La celda ya tiene un barco?"}
+C -- "Sí" --> D["Anota que hay superposición"]
+C -- "No" --> E{"¿Quedan celdas por revisar?"}
 D --> E
 E -- "Sí" --> B
-E -- "No" --> F(["return boat_in"])
+E -- "No" --> F(["Devuelve el resultado"])
 ```
-
 
 #### `Player.set_boat_random_place(board, max_x, max_y, random, size_board)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["x = random(size_board - max_x); y = random(size_board - max_y)"]
-B --> C["free = true; revisa el área x..x+max_x, y..y+max_y"]
-C --> D{"alguna celda == 1 ?"}
-D -- "Sí" --> E["free = false"] --> B
-D -- "No" --> F["Pone 1 en toda el área"]
-F --> G(["return"])
+A(["Inicio"]) --> B["Elige al azar una esquina que deje el barco dentro del tablero"]
+B --> C["Revisa si toda el área del barco está libre"]
+C --> D{"¿Alguna celda ya tiene un barco?"}
+D -- "Sí" --> B
+D -- "No" --> F["Marca como barco toda el área"]
+F --> G(["Fin"])
 ```
 
-
 ### Bot.java
-
 
 #### `Play(int[][] board, int size)`
 
 ```mermaid
 flowchart TD
-A(["Inicio: target = 0"]) --> B{"random(acuracity) == 0 ?"}
-B -- "Sí" --> C["target = 1"]
-B -- "No" --> D
-C --> D["count = count_cells(board, size, target)"]
-D --> E{"count == 0 ?"}
-E -- "Sí" --> F["target = 1 - target; recuenta"]
-E -- "No" --> G
-F --> G["n = random(count); k = 0"]
-G --> H["Recorre el tablero"]
-H --> I{"board[i][j] == target ?"}
-I -- "Sí" --> J{"k == n ?"}
-J -- "Sí" --> K["shoot(board, i, j)"]
-K --> L{"target == 1 ?"}
-L -- "Sí" --> R1(["return true"])
-L -- "No" --> R2(["return false"])
-J -- "No" --> M["k++"] --> H
+A(["Inicio: apunta a agua"]) --> B{"¿Un número al azar según la puntería indica apuntar a un barco?"}
+B -- "Sí" --> C["Cambia el objetivo a barco"]
+B -- "No" --> D["Cuenta las celdas del tipo objetivo"]
+C --> D
+D --> E{"¿No hay celdas de ese tipo?"}
+E -- "Sí" --> F["Cambia al otro tipo de objetivo y vuelve a contar"]
+E -- "No" --> G["Elige al azar cuál de esas celdas disparar"]
+F --> G
+G --> H["Recorre el tablero contando las celdas del tipo objetivo"]
+H --> I{"¿Llegó a la celda elegida?"}
 I -- "No" --> H
+I -- "Sí" --> K["Dispara a esa celda"]
+K --> L{"¿El objetivo era un barco?"}
+L -- "Sí" --> R1(["Devuelve verdadero: acertó"])
+L -- "No" --> R2(["Devuelve falso: falló"])
 ```
-
 
 #### `count_cells(board, size, value)`
 
 ```mermaid
 flowchart TD
-A(["Inicio: count=0"]) --> B["Recorre i, j"]
-B --> C{"board[i][j] == value ?"}
-C -- "Sí" --> D["count++"]
-C -- "No" --> E{"quedan celdas ?"}
+A(["Inicio con contador en cero"]) --> B["Recorre las celdas del tablero"]
+B --> C{"¿La celda tiene el valor buscado?"}
+C -- "Sí" --> D["Suma uno al contador"]
+C -- "No" --> E{"¿Quedan celdas por revisar?"}
 D --> E
 E -- "Sí" --> B
-E -- "No" --> F(["return count"])
+E -- "No" --> F(["Devuelve el contador"])
 ```
-
 
 #### `shoot(board, x, y)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B{"board[x][y] == 1 ?"}
-B -- "Sí" --> C["board[x][y] = 2"]
-B -- "No" --> D["board[x][y] = 3"]
+A(["Inicio"]) --> B{"¿La celda tiene un barco?"}
+B -- "Sí" --> C["Marca la celda como impactada"]
+B -- "No" --> D["Marca la celda como disparo fallado"]
 C --> E(["Fin"])
 D --> E
 ```
 
-
 ### Display.java
-
 
 #### `sleep(int sleep)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["Thread.sleep(sleep)"]
-B -- "OK" --> C(["Fin"])
-B -- "InterruptedException" --> D["Thread.currentThread().interrupt()"] --> C
+A(["Inicio"]) --> B["Pausa el programa los milisegundos indicados"]
+B -- "Terminó la pausa" --> C(["Fin"])
+B -- "La pausa fue interrumpida" --> D["Restaura el estado de interrupción del hilo"]
+D --> C
 ```
-
 
 #### `center_x(total, width) y max_line_width(lines)`
 
+Función `center_x`:
+
 ```mermaid
-flowchart LR
-subgraph centrar["center_x"]
-A(["total, width"]) --> B["return (total - width) / 2"]
-end
-subgraph ancho["max_line_width"]
-C(["lines"]) --> D["max = 0"] --> E{"lines[i].length > max ?"}
-E -- "Sí" --> F["max = lines[i].length"] --> G{"quedan líneas ?"}
-E -- "No" --> G
-G -- "Sí" --> E
-G -- "No" --> H(["return max"])
-end
+flowchart TD
+A(["Inicio"]) --> B["Resta el ancho del elemento al ancho total"]
+B --> C["Divide el resultado entre dos"]
+C --> D(["Devuelve la columna inicial"])
 ```
 
+Función `max_line_width`:
+
+```mermaid
+flowchart TD
+A(["Inicio con máximo en cero"]) --> B["Toma la siguiente línea"]
+B --> C{"¿Es más larga que el máximo actual?"}
+C -- "Sí" --> D["Actualiza el máximo"]
+C -- "No" --> E{"¿Quedan líneas?"}
+D --> E
+E -- "Sí" --> B
+E -- "No" --> F(["Devuelve el máximo"])
+```
 
 #### `draw_box(txt, x, y, width, height, style)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["Extrae las 6 piezas de style"]
-B --> C["Bordes horizontales (arriba y abajo)"]
-C --> D["Bordes verticales (izquierda y derecha)"]
-D --> E["Cuatro esquinas"]
+A(["Inicio"]) --> B["Separa los seis caracteres del estilo del marco"]
+B --> C["Dibuja los bordes horizontales de arriba y de abajo"]
+C --> D["Dibuja los bordes verticales de izquierda y derecha"]
+D --> E["Dibuja las cuatro esquinas"]
 E --> F(["Fin"])
 ```
-
 
 #### `draw_options(txt, options, selected, x, y, spacing)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B{"i < options.length ?"}
-B -- "Sí" --> C{"i == selected ?"}
-C -- "Sí" --> D["Fondo blanco, texto negro"]
-C -- "No" --> E["Colores por defecto"]
-D --> F["putString(x, y + i*spacing, options[i])"]
+A(["Inicio"]) --> B{"¿Quedan opciones por dibujar?"}
+B -- "Sí" --> C{"¿Es la opción resaltada?"}
+C -- "Sí" --> D["Usa fondo blanco y texto negro"]
+C -- "No" --> E["Usa los colores por defecto"]
+D --> F["Escribe la opción en su posición, separada por el espaciado"]
 E --> F
 F --> B
-B -- "No" --> G["Restaura colores"] --> H(["Fin"])
+B -- "No" --> G["Restaura los colores"]
+G --> H(["Fin"])
 ```
-
 
 #### `draw_board(txt, x, y, size, board)`
 
 ```mermaid
 flowchart TD
-A(["Inicio: negrita"]) --> B["Recorre i, j"]
-B --> C{"board[i][j]"}
-C -- "2" --> D["x roja"]
-C -- "3" --> E["0 blanco"]
-C -- "0 o 1" --> F["■ azul"]
-D --> G["Restaura colores"]
+A(["Inicio con negrita activada"]) --> B["Toma la siguiente celda"]
+B --> C{"¿Qué valor tiene la celda?"}
+C -- "Impacto" --> D["Dibuja una x roja"]
+C -- "Fallo" --> E["Dibuja un cero blanco"]
+C -- "Agua o barco" --> F["Dibuja un cuadrado azul"]
+D --> G["Restaura los colores"]
 E --> G
 F --> G
-G --> H{"quedan celdas ?"}
+G --> H{"¿Quedan celdas?"}
 H -- "Sí" --> B
 H -- "No" --> I(["Fin"])
 ```
-
 
 #### `draw_boats(txt, board, size, x, y)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["Recorre i, j"]
-B --> C{"board[i][j] == 1 ?"}
-C -- "Sí" --> D["■ rojo en (x+i*2, y+j); restaura colores"]
-C -- "No" --> E{"quedan celdas ?"}
+A(["Inicio"]) --> B["Toma la siguiente celda"]
+B --> C{"¿La celda tiene un barco intacto?"}
+C -- "Sí" --> D["Dibuja un cuadrado rojo y restaura los colores"]
+C -- "No" --> E{"¿Quedan celdas?"}
 D --> E
 E -- "Sí" --> B
 E -- "No" --> F(["Fin"])
 ```
 
-
 #### `draw_boats_and_pointer(txt, board, size, x, y, min_x, max_x, min_y, max_y)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["Recorre i, j"]
-B --> C{"board[i][j] == 1 ?"}
-C -- "Sí" --> D["■ rojo (barco ya colocado)"]
-C -- "No" --> E
-D --> E{"(i,j) dentro de min..max ?"}
-E -- "Sí" --> F["Fondo rojo, ■ azul"]
-F --> G{"i > min_x ?"}
-G -- "Sí" --> H["Rellena el espacio de la izquierda"]
-G -- "No" --> I
-H --> I["Restaura colores"]
-E -- "No" --> J{"quedan celdas ?"}
+A(["Inicio"]) --> B["Toma la siguiente celda"]
+B --> C{"¿La celda tiene un barco ya colocado?"}
+C -- "Sí" --> D["Dibuja un cuadrado rojo"]
+C -- "No" --> E{"¿La celda pertenece al barco que se está colocando?"}
+D --> E
+E -- "Sí" --> F["Dibuja un cuadrado azul sobre fondo rojo"]
+F --> G{"¿No es la primera columna del barco?"}
+G -- "Sí" --> H["Rellena el espacio de la izquierda para que el barco se vea continuo"]
+G -- "No" --> I["Restaura los colores"]
+H --> I
+E -- "No" --> J{"¿Quedan celdas?"}
 I --> J
 J -- "Sí" --> B
 J -- "No" --> K(["Fin"])
 ```
 
-
 #### `draw_pointer(mid, top, txt, x, y)`
 
 ```mermaid
 flowchart TD
-A(["Inicio"]) --> B["Azul sobre fondo rojo"]
-B --> C["setCharacter(mid + x*2, top + y, ■)"]
-C --> D["Restaura colores"] --> E(["Fin"])
+A(["Inicio"]) --> B["Elige azul sobre fondo rojo"]
+B --> C["Dibuja un cuadrado en la celda del puntero"]
+C --> D["Restaura los colores"]
+D --> E(["Fin"])
 ```
-
-
-`bot_animation()` está vacía y no ejecuta nada.
-
-## Observaciones sobre el código
-
-- **`save_game`** escribe dos veces `player_board`: la sección "tablero enemigo" repite el tablero del jugador en vez de usar `bot_board`.
-- **`Bot.acuracity`** se calcula una sola vez al cargar la clase, así que no se actualiza si la dificultad cambia después de reiniciar. En dificultad 3 vale 1 y el bot siempre apunta a barcos (nunca falla).
-- **`Menu.show`**: el tamaño máximo real del tablero es 25, porque la condición de subida es `<= 24`.
-- **Código sin uso:** `Board.set_board`, `Player.set_board`, `Display.bot_animation`, `Texts.GameIndication3`, `game` y `rows` en `game_loop`.
-- **`reset_game`** llama a `Main.main` recursivamente, lo que apila llamadas en cada reinicio.
-- **`Menu.menu_end`** alinea las estadísticas usando el largo de `user`, por lo que las otras líneas quedan desplazadas.
