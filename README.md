@@ -50,7 +50,7 @@ El tablero es una matriz `int[][]` y cada celda guarda un número. Se accede com
 | Valor | Significado | Cómo se dibuja |
 |---|---|---|
 | `0` | Agua sin disparar | `■` azul |
-| `1` | Barco intacto | `■` rojo (solo se ve en el tablero propio) |
+| `1` | Barco intacto | `■` rojo  |
 | `2` | Barco impactado (acierto) | `x` roja |
 | `3` | Disparo fallado (agua) | `0` blanco |
 
@@ -83,7 +83,7 @@ El tablero es una matriz `int[][]` y cada celda guarda un número. Se accede com
 | Variable | Tipo | Qué hace |
 |---|---|---|
 | `random` | `Random` | Generador aleatorio del bot. |
-| `acuracity` | `int` = `4 - Game.dificult` | Parámetro de puntería. Cuanto menor, más probable que el bot apunte a un barco. Se calcula una sola vez al cargar la clase. |
+| `acuracity` | `int` = `4 - Game.dificult` | Parámetro de puntería. Cuanto menor, más probable que el bot apunte a un barco. |
 
 ### Clase `Texts`
 
@@ -101,11 +101,9 @@ Todas son `public static` y contienen cadenas del juego.
 | `subtitle_velocity`, `warning`, `warning_two` | `String` | Subtítulos e indicaciones de ayuda. |
 | `blank_space`, `blank_space_board`, `blank_space_velocity` | `String` | Espacios en blanco que dibujan el campo de entrada con fondo negro. |
 | `acerted`, `missed`, `bot_acerted`, `bot_missed` | `String` | Mensajes tras cada disparo. |
-| `GameIndication1` a `GameIndication5` | `String` | Indicaciones durante la partida (la 3 no se usa). |
+| `GameIndication1` a `GameIndication5` | `String` | Indicaciones durante la partida |
 
 ## Glosario de funciones
-
-Para cada función se listan sus parámetros, variables locales y estructuras de datos.
 
 ### `Main.java`
 
@@ -173,7 +171,7 @@ Controla todos los menús de configuración. Devuelve la opción elegida (0 = ju
 - **`min_x`, `max_x`, `min_y`, `max_y`** (`int`): rectángulo que ocupa el barco, inicializado con las coordenadas del barco generado.
 - **`boat_on`** (`boolean`): `true` cuando el barco se colocó con éxito.
 - **`key`** (`KeyStroke`): tecla presionada.
-- **Qué hace:** dibuja el tablero, los barcos ya puestos y el barco actual. Las flechas desplazan el rectángulo sin salir del tablero. Con Enter llama a `player.set_boat`, que solo acepta si no hay solapamiento.
+- **Qué hace:** dibuja el tablero, los barcos ya puestos y el barco actual. Las flechas desplazan el barco. Con Enter llama a `player.set_boat`, que solo acepta si no hay solapamiento.
 
 #### `has_boats(int[][] board)` → `boolean`
 - **`i`, `j`** (`int`): índices de recorrido.
@@ -240,10 +238,10 @@ Si la celda es 1 la cambia a 2 (impacto); en otro caso la cambia a 3 (fallo).
 | `max_line_width(String[] lines)` → `int` | Devuelve el largo de la línea más larga (variable `max`). |
 | `draw_box(txt, x, y, width, height, style)` | Dibuja un marco con los 6 caracteres de `style` (variables `top_left`, `top_right`, `bottom_left`, `bottom_right`, `horizontal`, `vertical`). |
 | `draw_options(txt, options, selected, x, y, spacing)` | Escribe las opciones en vertical; la `selected` con fondo blanco y texto negro. Restaura los colores al final. |
-| `draw_board(txt, x, y, size, board)` | Dibuja cada celda según su valor: 2 → `x` roja, 3 → `0` blanca, 0 y 1 → `■` azul. Separa las celdas 2 columnas (`x + i*2`), por eso los barcos intactos quedan ocultos. |
+| `draw_board(txt, x, y, size, board)` | Dibuja cada celda según su valor: 2 → `x` roja, 3 → `0` blanca, 0 y 1 → `■` azul. |
 | `draw_boats(txt, board, size, x, y)` | Pinta de rojo con `■` las celdas con valor 1 (barcos intactos del jugador). |
 | `draw_boats_and_pointer(txt, board, size, x, y, min_x, max_x, min_y, max_y)` | Dibuja los barcos colocados en rojo y el barco que se está colocando con fondo rojo, rellenando el espacio entre celdas contiguas. |
-| `bot_animation()` | Función vacía, reservada para una animación del bot no implementada. |
+| `bot_animation()` |                                      |
 | `draw_pointer(mid, top, txt, x, y)` | Dibuja el puntero (`■` azul sobre fondo rojo) en la celda `(x, y)` y restaura los colores. |
 
 ## Estructuras de datos
@@ -261,7 +259,6 @@ Si la celda es 1 la cambia a 2 (impacto); en otro caso la cambia a 3 (fallo).
 
 ## Diagramas de flujo por función
 
-Los diagramas usan Mermaid, que GitHub renderiza automáticamente.
 
 
 ### Flujo de todo el proyecto
